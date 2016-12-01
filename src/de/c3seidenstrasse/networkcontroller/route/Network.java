@@ -19,13 +19,25 @@ public class Network implements Runnable {
 	public static final int ROUTERMAXWAIT = 10000;
 	public static final int DETECTIONMAXWAIT = 5000;
 
+	private final boolean automode;
 	private final Thread t;
 
 	public Network() {
+		this.automode = true;
 		this.queue = new LinkedList<>();
 		this.root = new CodeReader(this);
-
 		this.getRoot().create33c3();
+
+		this.t = new Thread(this, "NetworkWorker");
+		this.t.start();
+	}
+
+	public Network(final boolean automode) {
+		this.automode = automode;
+		this.queue = new LinkedList<>();
+		this.root = new CodeReader(this);
+		this.getRoot().create33c3();
+
 		this.t = new Thread(this, "NetworkWorker");
 		this.t.start();
 	}
@@ -103,7 +115,7 @@ public class Network implements Runnable {
 				protected void handle(final IdleState state) {
 					if (!Network.this.queue.isEmpty()) {
 						System.out.println("Router werden für das Saugen eingestellt! (PreparePull)");
-						final RouterTurningState pps = new PreparePullState(Network.this.queue.poll());
+						final RouterTurningState pps = new PreparePullState(Network.this.queue.peek());
 						Network.this.setState(pps);
 
 					}
@@ -131,6 +143,7 @@ public class Network implements Runnable {
 				protected void accept(final PushState pushState) {
 					if (pushState.isFinished()) {
 						System.out.println("Transport abgeschlossen!");
+						Network.this.queue.remove();
 						if (!Network.this.queue.isEmpty())
 							Network.this.awake();
 						final IdleState is = IdleState.getInstance();
@@ -143,6 +156,10 @@ public class Network implements Runnable {
 
 	synchronized public void stop() {
 		this.t.interrupt();
+	}
+
+	public boolean isAutomode() {
+		return this.automode;
 	}
 
 }
