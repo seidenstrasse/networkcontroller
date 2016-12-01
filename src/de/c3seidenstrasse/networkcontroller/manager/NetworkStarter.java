@@ -7,9 +7,6 @@ import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
 
 public class NetworkStarter {
 
-	public static final int ROUTERMAXWAIT = 10000;
-	public static final int DETECTIONMAXWAIT = 5000;
-
 	public static void main(final String[] args)
 			throws NoAttachmentException, RouteNotFoundException, InterruptedException {
 		final Network n = new Network();
@@ -30,9 +27,9 @@ public class NetworkStarter {
 
 		n.addTransport(t1);
 
-		Thread.sleep((long) (ROUTERMAXWAIT + (Math.random() * DETECTIONMAXWAIT)));
+		Thread.sleep((long) (Network.ROUTERMAXWAIT + (Math.random() * Network.DETECTIONMAXWAIT)));
 		t1.getHighestPoint().capsulePassed();
-		Thread.sleep((long) (ROUTERMAXWAIT + (Math.random() * DETECTIONMAXWAIT)));
+		Thread.sleep((long) (Network.ROUTERMAXWAIT + (Math.random() * Network.DETECTIONMAXWAIT)));
 		t1.getEnde().capsulePassed();
 	}
 

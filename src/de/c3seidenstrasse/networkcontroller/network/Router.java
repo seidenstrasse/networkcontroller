@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import de.c3seidenstrasse.networkcontroller.manager.Network;
-import de.c3seidenstrasse.networkcontroller.manager.NetworkStarter;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
 import de.c3seidenstrasse.networkcontroller.utils.NotFoundException;
@@ -192,7 +191,7 @@ public class Router extends NetworkComponent {
 		final Thread t = new Thread(() -> {
 			try {
 				synchronized (this) {
-					this.wait((long) ((Math.random() * NetworkStarter.ROUTERMAXWAIT) + 1));
+					this.wait((long) ((Math.random() * Network.ROUTERMAXWAIT) + 1));
 				}
 			} catch (final InterruptedException e) {
 				e.printStackTrace();

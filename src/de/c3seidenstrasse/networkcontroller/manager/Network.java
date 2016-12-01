@@ -16,6 +16,10 @@ import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
 
 public class Network implements Runnable {
+
+	public static final int ROUTERMAXWAIT = 10000;
+	public static final int DETECTIONMAXWAIT = 5000;
+
 	boolean isStopped = false;
 	private final Thread t;
 
