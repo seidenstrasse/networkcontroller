@@ -185,7 +185,7 @@ public class Router extends NetworkComponent {
 
 	/**
 	 * sends a command to a router to change his direction. this method is
-	 * asynchronus
+	 * asynchronous
 	 */
 	@Override
 	public void turnTo(final Integer Exit) {
