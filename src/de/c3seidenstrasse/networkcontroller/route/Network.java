@@ -19,7 +19,6 @@ public class Network implements Runnable {
 	public static final int ROUTERMAXWAIT = 10000;
 	public static final int DETECTIONMAXWAIT = 5000;
 
-	boolean isStopped = false;
 	private final Thread t;
 
 	public Network() {
@@ -77,7 +76,7 @@ public class Network implements Runnable {
 
 	@Override
 	public void run() {
-		while (!this.isStopped) {
+		while (!this.t.isInterrupted()) {
 			synchronized (this) {
 				if (!this.isNotified) {
 					try {
