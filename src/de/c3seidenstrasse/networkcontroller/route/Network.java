@@ -1,4 +1,4 @@
-package de.c3seidenstrasse.networkcontroller.manager;
+package de.c3seidenstrasse.networkcontroller.route;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -12,7 +12,6 @@ import de.c3seidenstrasse.networkcontroller.network.states.PreparePushState;
 import de.c3seidenstrasse.networkcontroller.network.states.PullState;
 import de.c3seidenstrasse.networkcontroller.network.states.PushState;
 import de.c3seidenstrasse.networkcontroller.network.states.RouterTurningState;
-import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
 
 public class Network implements Runnable {

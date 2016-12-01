@@ -1,9 +1,8 @@
-package de.c3seidenstrasse.networkcontroller.manager;
+package de.c3seidenstrasse.networkcontroller.utils;
 
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
+import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
-import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
-import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
 
 public class NetworkStarter {
 
