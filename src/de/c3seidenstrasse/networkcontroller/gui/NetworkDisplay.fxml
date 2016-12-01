@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane fx:id="borderpane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.c3seidenstrasse.networkcontroller.gui.NetworkDisplayController">
+   <right>
+      <VBox fx:id="rightbox" alignment="TOP_CENTER" minHeight="300.0" minWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox fx:id="statusbox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Status" />
+                  <Label text="OK" textFill="#a3ff00">
+                     <font>
+                        <Font name="System Bold" size="36.0" />
+                     </font>
+                  </Label>
+                  <Label text="Modus">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label text="Auto" textFill="#a3ff00">
+                     <font>
+                        <Font name="System Bold" size="36.0" />
+                     </font>
+                  </Label>
+                  <Label text="Luftzufuhr">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label text="Aus" textFill="RED">
+                     <font>
+                        <Font name="System Bold" size="36.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox fx:id="buttonbox" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Manuell">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin></Button>
+                  <Button disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Unterdruck">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin></Button>
+                  <Button disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Überdruck">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin></Button>
+                  <Button disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Luft Stop">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin></Button>
+               </children>
+            </VBox>
+         </children></VBox>
+   </right>
+   <center>
+      <VBox minHeight="300.0" minWidth="500.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </padding></VBox>
+   </center>
+   <left>
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" text="Netzwerk" />
+            <TreeView fx:id="tree" minHeight="400.0" minWidth="200.0" />
+            <Label alignment="CENTER" text="Warteschlange" />
+            <ListView fx:id="routelist" minHeight="400.0" minWidth="200.0" />
+         </children>
+      </VBox>
+   </left>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</BorderPane>
