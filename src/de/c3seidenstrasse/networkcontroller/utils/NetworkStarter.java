@@ -16,15 +16,10 @@ public class NetworkStarter {
 		final NetworkComponent F2_E2 = centralNode.getChildAt(3).getChildAt(4).getChildAt(4).getChildAt(3);
 
 		final Transport t1 = new Transport(poc, F2_E2);
-
-		if (System.console() != null) {
-			System.out.print("Enter Start Node: ");
-			System.console().readLine();
-			System.out.print("Enter Target Node: ");
-			System.console().readLine();
-		}
+		final Transport t2 = new Transport(F2_E2, poc); // heile machen
 
 		n.addTransport(t1);
+		n.addTransport(t2);
 
 		Thread.sleep((long) (Network.ROUTERMAXWAIT + (Math.random() * Network.DETECTIONMAXWAIT)));
 		t1.getHighestPoint().capsulePassed();
