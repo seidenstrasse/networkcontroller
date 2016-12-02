@@ -19,21 +19,9 @@ public class Network implements Runnable {
 	public static final int ROUTERMAXWAIT = 10000;
 	public static final int DETECTIONMAXWAIT = 5000;
 
-	private final boolean automode;
 	private final Thread t;
 
 	public Network() {
-		this.automode = true;
-		this.queue = new LinkedList<>();
-		this.root = new CodeReader(this);
-		this.getRoot().create33c3();
-
-		this.t = new Thread(this, "NetworkWorker");
-		this.t.start();
-	}
-
-	public Network(final boolean automode) {
-		this.automode = automode;
 		this.queue = new LinkedList<>();
 		this.root = new CodeReader(this);
 		this.getRoot().create33c3();
@@ -157,9 +145,4 @@ public class Network implements Runnable {
 	synchronized public void stop() {
 		this.t.interrupt();
 	}
-
-	public boolean isAutomode() {
-		return this.automode;
-	}
-
 }
