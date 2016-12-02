@@ -38,6 +38,8 @@ public abstract class RouterTurningState extends NetworkState implements Observe
 												// correct position!
 			}
 		}
+		if (this.waiting.isEmpty())
+			this.t.getNetwork().awake();
 	}
 
 	@Override
