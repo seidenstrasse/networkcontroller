@@ -71,7 +71,8 @@ public class NetworkDisplayController {
 		});
 
 		// Status
-		this.statusbox.prefHeightProperty().bind(this.rightbox.heightProperty().subtract(this.buttonbox.getHeight()));
+		this.statusbox.prefHeightProperty()
+				.bind(this.rightbox.heightProperty().subtract(this.buttonbox.heightProperty()));
 
 	}
 
