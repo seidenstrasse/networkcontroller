@@ -12,12 +12,15 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import com.google.gson.Gson;
+
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.states.NetworkState;
 
 @ServerEndpoint("/websocket")
 public class WebServer extends GuiUpdater {
 	Set<Session> sessions = new HashSet<>();
+	Gson gson = new Gson();
 
 	@OnOpen
 	synchronized public void onOpen(final Session session) {
@@ -48,13 +51,13 @@ public class WebServer extends GuiUpdater {
 
 	@Override
 	public void updateNode(final NetworkComponent nc) {
-		// TODO Auto-generated method stub
-
+		final String message = this.gson.toJson(new NodeChanged(nc));
+		this.sendToAll(message);
 	}
 
 	@Override
 	public void updateState(final NetworkState ns) {
-		// TODO Auto-generated method stub
-
+		final String message = this.gson.toJson(new StateChanged(ns));
+		this.sendToAll(message);
 	}
 }
