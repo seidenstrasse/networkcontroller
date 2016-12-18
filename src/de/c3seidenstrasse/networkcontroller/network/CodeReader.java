@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import com.google.gson.annotations.Expose;
+
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
@@ -13,10 +15,12 @@ import de.c3seidenstrasse.networkcontroller.utils.TreeIntegrityException;
 import javafx.scene.control.TreeItem;
 
 public class CodeReader extends NetworkComponent {
+	@Expose
+	final String name = "CodeReader";
 
 	@Override
 	public String toString() {
-		return "CodeReader";
+		return this.name;
 	}
 
 	private NetworkComponent child;

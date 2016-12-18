@@ -13,14 +13,15 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.states.NetworkState;
 
 @ServerEndpoint("/websocket")
-public class WebServer extends GuiUpdater {
-	Set<Session> sessions = new HashSet<>();
-	Gson gson = new Gson();
+public class WebServer extends Gui {
+	final Set<Session> sessions = new HashSet<>();
+	final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
 	@OnOpen
 	synchronized public void onOpen(final Session session) {
@@ -49,15 +50,21 @@ public class WebServer extends GuiUpdater {
 		}
 	}
 
+	private void send(final String message, final Session session) {
+		session.getAsyncRemote().sendText(message);
+	}
+
 	@Override
 	public void updateNode(final NetworkComponent nc) {
 		final String message = this.gson.toJson(new NodeChanged(nc));
+		System.out.println("Benachrichtigung Node ausgel�st");
 		this.sendToAll(message);
 	}
 
 	@Override
 	public void updateState(final NetworkState ns) {
 		final String message = this.gson.toJson(new StateChanged(ns));
+		System.out.println("Benachrichtigung State ausgel�st");
 		this.sendToAll(message);
 	}
 }

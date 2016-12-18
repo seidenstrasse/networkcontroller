@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import com.google.gson.annotations.Expose;
+
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
@@ -14,6 +16,7 @@ public class Exit extends NetworkComponent {
 
 	private static final String AN_EXIT_HAS_NO_ATTACHMENT = "An exit has no attachment.";
 	private final NetworkComponent parent;
+	@Expose
 	private final String name;
 
 	Exit(final String name, final Network network, final NetworkComponent parent) {

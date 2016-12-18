@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
+import com.google.gson.annotations.Expose;
+
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
@@ -22,8 +24,10 @@ import javafx.scene.control.TreeItem;
 public class Router extends NetworkComponent {
 
 	private final NetworkComponent parent;
+	@Expose
 	private final Set<IndexedNetworkComponent> childs;
 
+	@Expose
 	private final String name;
 
 	Router(final String name, final Network network, final NetworkComponent parent) {

@@ -1,12 +1,16 @@
 package de.c3seidenstrasse.networkcontroller.network;
 
+import com.google.gson.annotations.Expose;
+
 public final class IndexedNetworkComponent {
 	@Override
 	public String toString() {
 		return "[nc=" + this.nc + ", i=" + this.i + "]";
 	}
 
+	@Expose
 	private final NetworkComponent nc;
+	@Expose
 	private final Integer i;
 
 	public IndexedNetworkComponent(final NetworkComponent nc, final Integer i) {
