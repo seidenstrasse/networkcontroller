@@ -93,19 +93,19 @@ public class CodeReader extends NetworkComponent {
 		final CodeReader cr = this;
 		try {
 			final Router cn = cr.createRouterAt(1, "Central Node");
-			cn.createExitAt(1, "Minecraft");
-			cn.createExitAt(2, "Pilz");
+			cn.createExitAt(1, "GateToGo1");
+			cn.createExitAt(2, "GateToGo2");
 			final Router gf1 = cn.createRouterAt(3, "GF1");
-			gf1.createExitAt(1, "Sendezentrum");
+			gf1.createExitAt(1, "WelcomeWizzards");
 			gf1.createExitAt(2, "GF2");
 			gf1.createExitAt(3, "POC/Heaven");
 			final Router f1 = gf1.createRouterAt(4, "F1");
-			f1.createExitAt(1, "F1_E0");
-			f1.createExitAt(2, "F1_E1");
-			f1.createExitAt(3, "F1_E2");
+			f1.createExitAt(1, "WelcomeWizzards");
+			f1.createExitAt(2, "WorkOut");
+			f1.createExitAt(3, "TriVision");
 			final Router f2 = f1.createRouterAt(4, "F2");
-			f2.createExitAt(1, "F2_E0");
-			f2.createExitAt(2, "F2_E1");
+			f2.createExitAt(1, "Section9");
+			f2.createExitAt(2, "DesertDruide");
 			f2.createExitAt(3, "F2_E2");
 		} catch (final NoAttachmentException e) {
 		}
