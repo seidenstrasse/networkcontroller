@@ -4,9 +4,9 @@ import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.states.NetworkState;
 
 public abstract class GuiUpdater {
-	public abstract void updateNode();
+	public abstract void updateNode(NetworkComponent nc);
 
-	public abstract void updateState();
+	public abstract void updateState(NetworkState ns);
 
 	protected class NodeChanged {
 		final String changed = "Node";

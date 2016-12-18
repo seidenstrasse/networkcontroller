@@ -11,6 +11,9 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
+import de.c3seidenstrasse.networkcontroller.network.states.NetworkState;
+
 @ServerEndpoint("/websocket")
 public class WebServer extends GuiUpdater {
 	Set<Session> sessions = new HashSet<>();
@@ -34,13 +37,13 @@ public class WebServer extends GuiUpdater {
 	}
 
 	@Override
-	public void updateNode() {
+	public void updateNode(final NetworkComponent nc) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void updateState() {
+	public void updateState(final NetworkState ns) {
 		// TODO Auto-generated method stub
 
 	}
