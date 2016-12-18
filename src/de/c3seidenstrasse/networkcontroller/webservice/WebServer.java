@@ -2,6 +2,7 @@ package de.c3seidenstrasse.networkcontroller.webservice;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.websocket.CloseReason;
@@ -19,7 +20,7 @@ public class WebServer extends GuiUpdater {
 	Set<Session> sessions = new HashSet<>();
 
 	@OnOpen
-	public void onOpen(final Session session) {
+	synchronized public void onOpen(final Session session) {
 		System.out.println("WebSocket opened: " + session.getId());
 		this.sessions.add(session);
 	}
@@ -31,9 +32,18 @@ public class WebServer extends GuiUpdater {
 	}
 
 	@OnClose
-	public void onClose(final CloseReason reason, final Session session) {
+	synchronized public void onClose(final CloseReason reason, final Session session) {
 		System.out.println("Closing a WebSocket due to " + reason.getReasonPhrase());
 		this.sessions.remove(session);
+	}
+
+	// --------------------------------------------------------------------------------
+
+	synchronized private void sendToAll(final String message) {
+		final Iterator<Session> i = this.sessions.iterator();
+		while (i.hasNext()) {
+			i.next().getAsyncRemote().sendText(message);
+		}
 	}
 
 	@Override
