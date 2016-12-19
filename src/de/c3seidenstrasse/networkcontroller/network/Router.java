@@ -7,6 +7,7 @@ import java.util.Set;
 
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
+import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
 import de.c3seidenstrasse.networkcontroller.utils.NotFoundException;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
@@ -26,8 +27,9 @@ public class Router extends NetworkComponent {
 
 	private final String name;
 
-	Router(final String name, final Network network, final NetworkComponent parent) {
-		super(network);
+	Router(final Integer id, final String name, final Network network, final NetworkComponent parent)
+			throws IdAlreadyExistsException {
+		super(id, network);
 		this.parent = parent;
 		this.childs = new HashSet<>();
 		this.name = name;
@@ -95,8 +97,9 @@ public class Router extends NetworkComponent {
 	}
 
 	@Override
-	public Exit createExitAt(final Integer position, final String name) {
-		final Exit e = new Exit(name, this.getNetwork(), this);
+	public Exit createExitAt(final Integer position, final Integer id, final String name)
+			throws IdAlreadyExistsException {
+		final Exit e = new Exit(id, name, this.getNetwork(), this);
 		try {
 			this.addChildAt(position, e);
 		} catch (SpaceOccupiedException | TreeIntegrityException e1) {
@@ -106,8 +109,9 @@ public class Router extends NetworkComponent {
 	}
 
 	@Override
-	public Router createRouterAt(final Integer position, final String name) {
-		final Router r = new Router(name, this.getNetwork(), this);
+	public Router createRouterAt(final Integer position, final Integer id, final String name)
+			throws IdAlreadyExistsException {
+		final Router r = new Router(id, name, this.getNetwork(), this);
 		try {
 			this.addChildAt(position, r);
 		} catch (final TreeIntegrityException | SpaceOccupiedException e) {

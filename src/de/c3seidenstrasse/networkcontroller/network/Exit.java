@@ -6,6 +6,7 @@ import java.util.Set;
 
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
+import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
 import javafx.scene.control.TreeItem;
@@ -16,8 +17,9 @@ public class Exit extends NetworkComponent {
 	private final NetworkComponent parent;
 	private final String name;
 
-	Exit(final String name, final Network network, final NetworkComponent parent) {
-		super(network);
+	Exit(final Integer id, final String name, final Network network, final NetworkComponent parent)
+			throws IdAlreadyExistsException {
+		super(id, network);
 		this.parent = parent;
 		this.name = name;
 		this.setCurrentExit(1);
@@ -39,7 +41,7 @@ public class Exit extends NetworkComponent {
 	}
 
 	@Override
-	public Exit createExitAt(final Integer position, final String name) throws NoAttachmentException {
+	public Exit createExitAt(final Integer position, final Integer id, final String name) throws NoAttachmentException {
 		throw new NoAttachmentException(Exit.AN_EXIT_HAS_NO_ATTACHMENT);
 	}
 
@@ -49,7 +51,8 @@ public class Exit extends NetworkComponent {
 	}
 
 	@Override
-	public Router createRouterAt(final Integer position, final String name) throws NoAttachmentException {
+	public Router createRouterAt(final Integer position, final Integer id, final String name)
+			throws NoAttachmentException {
 		throw new NoAttachmentException(Exit.AN_EXIT_HAS_NO_ATTACHMENT);
 	}
 

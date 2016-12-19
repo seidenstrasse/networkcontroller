@@ -6,6 +6,7 @@ import java.util.Set;
 
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
+import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
 import de.c3seidenstrasse.networkcontroller.utils.NotFoundException;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
@@ -21,8 +22,8 @@ public class CodeReader extends NetworkComponent {
 
 	private NetworkComponent child;
 
-	public CodeReader(final Network network) {
-		super(network);
+	public CodeReader(final Integer id, final Network network) throws IdAlreadyExistsException {
+		super(id, network);
 		this.setCurrentExit(1);
 	}
 
@@ -47,8 +48,9 @@ public class CodeReader extends NetworkComponent {
 	}
 
 	@Override
-	public Exit createExitAt(final Integer position, final String name) throws NoAttachmentException {
-		final Exit e = new Exit(name, this.getNetwork(), this);
+	public Exit createExitAt(final Integer position, final Integer id, final String name)
+			throws NoAttachmentException, IdAlreadyExistsException {
+		final Exit e = new Exit(id, name, this.getNetwork(), this);
 		try {
 			this.addChildAt(position, e);
 		} catch (final TreeIntegrityException e1) {
@@ -58,8 +60,9 @@ public class CodeReader extends NetworkComponent {
 	}
 
 	@Override
-	public Router createRouterAt(final Integer position, final String name) throws NoAttachmentException {
-		final Router r = new Router(name, this.getNetwork(), this);
+	public Router createRouterAt(final Integer position, final Integer id, final String name)
+			throws NoAttachmentException, IdAlreadyExistsException {
+		final Router r = new Router(id, name, this.getNetwork(), this);
 		try {
 			this.addChildAt(position, r);
 		} catch (final TreeIntegrityException e1) {
@@ -92,22 +95,22 @@ public class CodeReader extends NetworkComponent {
 	public void create33c3() {
 		final CodeReader cr = this;
 		try {
-			final Router cn = cr.createRouterAt(1, "Central Node");
-			cn.createExitAt(1, "Minecraft");
-			cn.createExitAt(2, "Pilz");
-			final Router gf1 = cn.createRouterAt(3, "GF1");
-			gf1.createExitAt(1, "Sendezentrum");
-			gf1.createExitAt(2, "GF2");
-			gf1.createExitAt(3, "POC/Heaven");
-			final Router f1 = gf1.createRouterAt(4, "F1");
-			f1.createExitAt(1, "F1_E0");
-			f1.createExitAt(2, "F1_E1");
-			f1.createExitAt(3, "F1_E2");
-			final Router f2 = f1.createRouterAt(4, "F2");
-			f2.createExitAt(1, "F2_E0");
-			f2.createExitAt(2, "F2_E1");
-			f2.createExitAt(3, "F2_E2");
-		} catch (final NoAttachmentException e) {
+			final Router cn = cr.createRouterAt(1, 2, "Central Node");
+			cn.createExitAt(1, 3, "GateToGo1");
+			cn.createExitAt(2, 4, "Pilz");
+			final Router gf1 = cn.createRouterAt(3, 5, "GF1");
+			gf1.createExitAt(1, 6, "Sendezentrum");
+			gf1.createExitAt(2, 7, "GF2");
+			gf1.createExitAt(3, 8, "POC");
+			final Router f1 = gf1.createRouterAt(4, 10, "F1");
+			f1.createExitAt(1, 12, "WelcomeWizzards1");
+			f1.createExitAt(2, 13, "WelcomeWizzards2");
+			f1.createExitAt(3, 14, "WorkOut");
+			final Router f2 = f1.createRouterAt(4, 11, "F2");
+			f2.createExitAt(1, 15, "Section 9");
+			f2.createExitAt(2, 16, "DesertDruide");
+			f2.createExitAt(3, 17, "FoodHackingBase");
+		} catch (final NoAttachmentException | IdAlreadyExistsException e) {
 		}
 	}
 

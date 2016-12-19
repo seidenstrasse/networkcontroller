@@ -1,9 +1,12 @@
 package de.c3seidenstrasse.networkcontroller.route;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 import de.c3seidenstrasse.networkcontroller.network.CodeReader;
+import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.states.IdleState;
 import de.c3seidenstrasse.networkcontroller.network.states.NetworkState;
 import de.c3seidenstrasse.networkcontroller.network.states.NetworkStateVisitor;
@@ -12,6 +15,7 @@ import de.c3seidenstrasse.networkcontroller.network.states.PreparePushState;
 import de.c3seidenstrasse.networkcontroller.network.states.PullState;
 import de.c3seidenstrasse.networkcontroller.network.states.PushState;
 import de.c3seidenstrasse.networkcontroller.network.states.RouterTurningState;
+import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
 import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
 
 public class Network implements Runnable {
@@ -21,13 +25,27 @@ public class Network implements Runnable {
 
 	private final Thread t;
 
+	private final Map<Integer, NetworkComponent> idMap;
+
 	public Network() {
 		this.queue = new LinkedList<>();
-		this.root = new CodeReader(this);
+		try {
+			this.root = new CodeReader(1, this);
+		} catch (final IdAlreadyExistsException e) {
+			throw new Error();
+		}
 		this.getRoot().create33c3();
+
+		this.idMap = new HashMap<>();
 
 		this.t = new Thread(this, "NetworkWorker");
 		this.t.start();
+	}
+
+	public void addNodeToMap(final Integer i, final NetworkComponent nc) throws IdAlreadyExistsException {
+		if (this.idMap.containsKey(i))
+			throw new IdAlreadyExistsException();
+		this.idMap.put(i, nc);
 	}
 
 	public Transport getCurrentTransport() throws NoCurrentTransportException {
