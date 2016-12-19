@@ -48,6 +48,10 @@ public class Network implements Runnable {
 		this.idMap.put(i, nc);
 	}
 
+	public NetworkComponent getNodeById(final Integer id) {
+		return this.idMap.get(id);
+	}
+
 	public Transport getCurrentTransport() throws NoCurrentTransportException {
 		return this.getState().getCurrentTransport();
 	}

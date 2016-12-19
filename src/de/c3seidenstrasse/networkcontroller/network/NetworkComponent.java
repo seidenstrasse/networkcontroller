@@ -163,7 +163,7 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 
 	public abstract void turnTo(final Integer Exit);
 
-	protected void setCurrentExit(final Integer currentExit) {
+	public void setCurrentExit(final Integer currentExit) {
 		this.currentExit = currentExit;
 		this.notifyObservers(this, ObserverEvent.POSITIONCHANGED);
 	}
