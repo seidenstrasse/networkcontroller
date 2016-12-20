@@ -1,9 +1,9 @@
 package de.c3seidenstrasse.networkcontroller.communication;
 
 import com.sun.jna.Library;
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.Memory;
 
 public class SSS7 {
 	private static SSS7 instance = null;
@@ -33,7 +33,6 @@ public class SSS7 {
 	public final int payloadLength = 16;
 
 	private final NativeSSS7 lib;
-	private String serial;
 
 	protected SSS7() {
 		this.lib = (NativeSSS7) Native.loadLibrary("libsss7.so", NativeSSS7.class);
@@ -43,7 +42,7 @@ public class SSS7 {
 	// instance
 	// for all of them
 	public synchronized boolean start(final String serial) {
-		return this.lib.libsss7_start(this.serial) == 0;
+		return this.lib.libsss7_start(serial) == 0;
 	}
 
 	public synchronized boolean canSend() {
