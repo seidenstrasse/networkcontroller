@@ -10,6 +10,7 @@ import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
 import de.c3seidenstrasse.networkcontroller.utils.NotFoundException;
 import de.c3seidenstrasse.networkcontroller.utils.ObserverEvent;
+import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
 import de.c3seidenstrasse.networkcontroller.utils.NetworkComponentObservee;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
 import de.c3seidenstrasse.networkcontroller.utils.SpaceOccupiedException;
@@ -24,9 +25,12 @@ import javafx.scene.control.TreeItem;
 public abstract class NetworkComponent extends NetworkComponentObservee {
 	private Integer currentExit;
 	private final Network network;
+	private final Integer id;
 
-	NetworkComponent(final Network network) {
+	NetworkComponent(final Integer id, final Network network) throws IdAlreadyExistsException {
 		this.network = network;
+		this.id = id;
+		network.addNodeToMap(id, this);
 		this.setCurrentExit(0);
 	}
 
@@ -98,9 +102,11 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	protected abstract void addChildAt(Integer position, NetworkComponent nc)
 			throws NoAttachmentException, TreeIntegrityException, SpaceOccupiedException;
 
-	public abstract Exit createExitAt(Integer position, String name) throws NoAttachmentException;
+	public abstract Exit createExitAt(Integer position, final Integer id, String name)
+			throws NoAttachmentException, IdAlreadyExistsException;
 
-	public abstract Router createRouterAt(Integer position, String Name) throws NoAttachmentException;
+	public abstract Router createRouterAt(Integer position, final Integer id, String Name)
+			throws NoAttachmentException, IdAlreadyExistsException;
 
 	public abstract void fillRoute(Transport t, NetworkComponent target);
 
@@ -157,7 +163,7 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 
 	public abstract void turnTo(final Integer Exit);
 
-	protected void setCurrentExit(final Integer currentExit) {
+	public void setCurrentExit(final Integer currentExit) {
 		this.currentExit = currentExit;
 		this.notifyObservers(this, ObserverEvent.POSITIONCHANGED);
 	}
