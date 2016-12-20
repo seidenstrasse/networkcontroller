@@ -16,6 +16,10 @@ public class SssMessageProcessor implements Runnable {
 
 	@Override
 	public void run() {
+		System.out.println("MSG: " + this.message[0]);
+		System.out.println("SRC: " + this.message[1]);
+		System.out.println("DST: " + this.message[2]);
+		System.out.println("PL1: " + this.message[3]);
 		switch (this.message[0]) {
 		case 0x00:
 			// Kapsel erkannt
@@ -48,7 +52,7 @@ public class SssMessageProcessor implements Runnable {
 			// TODO implement barcode transfer
 			break;
 		case 0x05:
-			// Bestätigung Transfer
+			// Bestï¿½tigung Transfer
 			// verwerfen
 			break;
 		case 0x06:

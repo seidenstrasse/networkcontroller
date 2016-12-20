@@ -32,7 +32,9 @@ public class SssConnection {
 			while (!Thread.interrupted()) {
 				while (!SSS7.getInstance().hasReceived()) {
 					try {
-						this.wait(100);
+						synchronized (this) {
+							this.wait(100);
+						}
 					} catch (final InterruptedException e) {
 						e.printStackTrace();
 					}

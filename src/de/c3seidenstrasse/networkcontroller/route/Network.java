@@ -32,6 +32,7 @@ public class Network implements Runnable {
 
 	public Network() {
 		this.queue = new LinkedList<>();
+		this.idMap = new HashMap<>();
 		try {
 			this.root = new CodeReader(1, this);
 		} catch (final IdAlreadyExistsException e) {
@@ -39,8 +40,6 @@ public class Network implements Runnable {
 		}
 		this.getRoot().create33c3();
 		this.sssc = new SssConnection(this, "/dev/ttyUSB0");
-
-		this.idMap = new HashMap<>();
 
 		this.t = new Thread(this, "NetworkWorker");
 		this.t.start();
@@ -70,7 +69,7 @@ public class Network implements Runnable {
 	}
 
 	public void startPushAirflow() {
-		System.out.println("Saubsauger Überdruck wurde gestartet!");
+		System.out.println("Saubsauger ï¿½berdruck wurde gestartet!");
 	}
 
 	public void startPullAirflow() {
@@ -128,7 +127,7 @@ public class Network implements Runnable {
 				@Override
 				protected void handle(final IdleState state) {
 					if (!Network.this.queue.isEmpty()) {
-						System.out.println("Router werden für das Saugen eingestellt! (PreparePull)");
+						System.out.println("Router werden fï¿½r das Saugen eingestellt! (PreparePull)");
 						final RouterTurningState pps = new PreparePullState(Network.this.queue.peek());
 						Network.this.setState(pps);
 
@@ -138,7 +137,7 @@ public class Network implements Runnable {
 				@Override
 				protected void accept(final PullState pullState) {
 					if (pullState.isFinished()) {
-						System.out.println("Router werden für das Pusten eingestellt (PreparePush)!");
+						System.out.println("Router werden fï¿½r das Pusten eingestellt (PreparePush)!");
 						final PreparePushState pps = new PreparePushState(pullState.getCurrentTransport());
 						Network.this.setState(pps);
 					}
