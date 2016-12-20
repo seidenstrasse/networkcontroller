@@ -196,19 +196,9 @@ public class Router extends NetworkComponent {
 	 */
 	@Override
 	public void turnTo(final Integer Exit) {
-		final Thread t = new Thread(() -> {
-			try {
-				synchronized (this) {
-					this.wait((long) ((Math.random() * Network.ROUTERMAXWAIT) + 1));
-				}
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
-			System.out.println(
-					"SIMULATOR: Router " + this.toString() + " hat eine Endlage bei " + Exit + " eingenommen!");
-			Router.this.setCurrentExit(Exit);
-		});
-		t.start();
+		final byte[] message = { 0x01, 0x00, (byte) (int) this.getId(), (byte) (int) Exit, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+		this.getNetwork().getSssc().send(message);
 	}
 
 	@Override

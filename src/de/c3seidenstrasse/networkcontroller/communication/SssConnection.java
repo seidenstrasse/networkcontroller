@@ -10,7 +10,7 @@ public class SssConnection {
 	private final SssSender sender;
 	private final SssReciever reciever;
 
-	SssConnection(final Network n, final String connection) {
+	public SssConnection(final Network n, final String connection) {
 		this.n = n;
 		SSS7.getInstance().start(connection);
 

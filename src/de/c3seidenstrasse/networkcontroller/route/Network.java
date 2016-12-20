@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
+import de.c3seidenstrasse.networkcontroller.communication.SssConnection;
 import de.c3seidenstrasse.networkcontroller.network.CodeReader;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.states.IdleState;
@@ -25,6 +26,8 @@ public class Network implements Runnable {
 
 	private final Thread t;
 
+	private final SssConnection sssc;
+
 	private final Map<Integer, NetworkComponent> idMap;
 
 	public Network() {
@@ -35,6 +38,7 @@ public class Network implements Runnable {
 			throw new Error();
 		}
 		this.getRoot().create33c3();
+		this.sssc = new SssConnection(this, "/dev/ttyUSB0");
 
 		this.idMap = new HashMap<>();
 
@@ -42,10 +46,10 @@ public class Network implements Runnable {
 		this.t.start();
 	}
 
-	public void addNodeToMap(final Integer i, final NetworkComponent nc) throws IdAlreadyExistsException {
-		if (this.idMap.containsKey(i))
+	public void addNodeToMap(final Integer id, final NetworkComponent nc) throws IdAlreadyExistsException {
+		if (this.idMap.containsKey(id))
 			throw new IdAlreadyExistsException();
-		this.idMap.put(i, nc);
+		this.idMap.put(id, nc);
 	}
 
 	public NetworkComponent getNodeById(final Integer id) {
@@ -166,5 +170,9 @@ public class Network implements Runnable {
 
 	synchronized public void stop() {
 		this.t.interrupt();
+	}
+
+	public SssConnection getSssc() {
+		return this.sssc;
 	}
 }

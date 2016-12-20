@@ -178,4 +178,8 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	}
 
 	public abstract TreeItem<NetworkComponent> getTreeItem();
+
+	public Integer getId() {
+		return id;
+	}
 }

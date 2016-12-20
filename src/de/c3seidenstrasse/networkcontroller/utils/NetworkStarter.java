@@ -9,7 +9,6 @@ public class NetworkStarter {
 	public static void main(final String[] args)
 			throws NoAttachmentException, RouteNotFoundException, InterruptedException {
 		final Network n = new Network();
-
 		n.getRoot().create33c3();
 		final NetworkComponent centralNode = n.getRoot().getChild();
 		final NetworkComponent poc = centralNode.getChildAt(3).getChildAt(3);
