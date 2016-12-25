@@ -99,21 +99,19 @@ public class CodeReader extends NetworkComponent {
 	public void create33c3() {
 		final CodeReader cr = this;
 		try {
-			final Router cn = cr.createRouterAt(1, 2, "Central Node");
-			cn.createExitAt(1, 3, "GateToGo1");
-			cn.createExitAt(2, 4, "Pilz");
-			final Router gf1 = cn.createRouterAt(3, 5, "GF1");
-			gf1.createExitAt(1, 6, "Sendezentrum");
-			gf1.createExitAt(2, 7, "GF2");
-			gf1.createExitAt(3, 8, "POC");
-			final Router f1 = gf1.createRouterAt(4, 10, "F1");
-			f1.createExitAt(1, 12, "WelcomeWizzards1");
-			f1.createExitAt(2, 13, "WelcomeWizzards2");
-			f1.createExitAt(3, 14, "WorkOut");
-			final Router f2 = f1.createRouterAt(4, 11, "F2");
-			f2.createExitAt(1, 15, "Section 9");
-			f2.createExitAt(2, 16, "DesertDruide");
-			f2.createExitAt(3, 17, "FoodHackingBase");
+			final Router alice = cr.createRouterAt(1, 10, "Alice");
+			alice.createExitAt(1, 1, "Seidenstrasse");
+			alice.createExitAt(2, 2, "Spacestation");
+			final Router betty = alice.createRouterAt(3, 20, "Betty");
+			betty.createExitAt(1, 3, "Eingang");
+			betty.createExitAt(2, 4, "Sendezentrum");
+			final Router caty = betty.createRouterAt(2, 30, "Caty");
+			caty.createExitAt(1, 5, "Wizzard");
+			caty.createExitAt(2, 6, "Kidspace");
+			caty.createExitAt(3, 7, "Coffeenerds");
+			caty.createExitAt(4, 8, "Lounge");
+			caty.createExitAt(5, 9, "FoodHacker");
+			caty.createExitAt(6, 10, "Monolith");
 		} catch (final NoAttachmentException | IdAlreadyExistsException e) {
 		}
 	}
