@@ -198,7 +198,7 @@ public class Router extends NetworkComponent {
 	public void turnTo(final Integer Exit) {
 		final byte[] message = { 0x01, 0x00, (byte) (int) this.getId(), (byte) (int) Exit, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-		this.getNetwork().getSssc().send(message);
+		this.getNetwork().send(message);
 	}
 
 	@Override

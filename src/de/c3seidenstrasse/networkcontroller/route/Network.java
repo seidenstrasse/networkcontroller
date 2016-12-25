@@ -30,7 +30,7 @@ public class Network implements Runnable {
 
 	private final Map<Integer, NetworkComponent> idMap;
 
-	public Network() {
+	private Network(final boolean withNetwork) {
 		this.queue = new LinkedList<>();
 		this.idMap = new HashMap<>();
 		try {
@@ -39,10 +39,35 @@ public class Network implements Runnable {
 			throw new Error();
 		}
 		this.getRoot().create33c3();
-		this.sssc = new SssConnection(this, "/dev/ttyUSB0");
+
+		if (withNetwork) {
+			this.sssc = new SssConnection(this, "/dev/ttyUSB0");
+		} else {
+			this.sssc = null;
+		}
 
 		this.t = new Thread(this, "NetworkWorker");
 		this.t.start();
+	}
+
+	/**
+	 * creates a network with an SSSConnection
+	 *
+	 * @return the network object
+	 */
+	public static Network create() {
+		return new Network(true);
+	}
+
+	/**
+	 * creates a network
+	 *
+	 * @param withNetwork
+	 *            indicates if the network should have an SSS7 connection
+	 * @return the network object
+	 */
+	public static Network create(final boolean withNetwork) {
+		return new Network(withNetwork);
 	}
 
 	public void addNodeToMap(final Integer id, final NetworkComponent nc) throws IdAlreadyExistsException {
@@ -171,7 +196,15 @@ public class Network implements Runnable {
 		this.t.interrupt();
 	}
 
-	public SssConnection getSssc() {
-		return this.sssc;
+	/**
+	 * sends a message if an SSSConnection is present
+	 *
+	 * @param message
+	 *            the message to send
+	 */
+	public void send(final byte[] message) {
+		if (this.sssc != null)
+			this.sssc.send(message);
+
 	}
 }

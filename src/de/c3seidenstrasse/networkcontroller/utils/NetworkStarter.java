@@ -8,7 +8,7 @@ public class NetworkStarter {
 
 	public static void main(final String[] args)
 			throws NoAttachmentException, RouteNotFoundException, InterruptedException {
-		final Network n = new Network();
+		final Network n = Network.create();
 		n.getRoot().create33c3();
 		final NetworkComponent centralNode = n.getRoot().getChild();
 		final NetworkComponent gateToGo = centralNode.getChildAt(2);
