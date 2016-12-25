@@ -31,7 +31,7 @@ public class Network implements Runnable {
 		this.queue = new LinkedList<>();
 		this.idMap = new HashMap<>();
 		try {
-			this.root = new CodeReader(1, this);
+			this.root = new CodeReader(0xFD, this);
 		} catch (final IdAlreadyExistsException e) {
 			throw new Error();
 		}
