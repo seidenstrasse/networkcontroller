@@ -3,6 +3,7 @@ package de.c3seidenstrasse.networkcontroller.gui;
 import java.io.IOException;
 import java.net.URL;
 
+import de.c3seidenstrasse.networkcontroller.route.Network;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -25,8 +26,9 @@ public class NetworkScreen extends Application {
 			primaryStage.setTitle("Network Display");
 			// primaryStage.setResizable(false);
 			final NetworkScreenController c = loader.getController();
-			c.init();
+			final Network n = c.init();
 			primaryStage.setOnCloseRequest(e -> {
+				n.stop();
 				Platform.exit();
 			});
 			primaryStage.sizeToScene();
