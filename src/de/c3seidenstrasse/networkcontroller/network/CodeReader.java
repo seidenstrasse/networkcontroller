@@ -99,13 +99,13 @@ public class CodeReader extends NetworkComponent {
 	public void create33c3() {
 		final CodeReader cr = this;
 		try {
-			final Router alice = cr.createRouterAt(1, 10, "Alice");
+			final Router alice = cr.createRouterAt(1, 11, "Alice");
 			alice.createExitAt(1, 1, "Seidenstrasse");
 			alice.createExitAt(2, 2, "Spacestation");
-			final Router betty = alice.createRouterAt(3, 20, "Betty");
+			final Router betty = alice.createRouterAt(3, 22, "Betty");
 			betty.createExitAt(1, 3, "Eingang");
 			betty.createExitAt(2, 4, "Sendezentrum");
-			final Router caty = betty.createRouterAt(2, 30, "Caty");
+			final Router caty = betty.createRouterAt(3, 33, "Caty");
 			caty.createExitAt(1, 5, "Wizzard");
 			caty.createExitAt(2, 6, "Kidspace");
 			caty.createExitAt(3, 7, "Coffeenerds");
@@ -113,6 +113,7 @@ public class CodeReader extends NetworkComponent {
 			caty.createExitAt(5, 9, "FoodHacker");
 			caty.createExitAt(6, 10, "Monolith");
 		} catch (final NoAttachmentException | IdAlreadyExistsException e) {
+			e.printStackTrace();
 		}
 	}
 
