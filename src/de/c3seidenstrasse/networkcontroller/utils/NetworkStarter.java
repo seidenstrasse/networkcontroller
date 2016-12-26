@@ -1,13 +1,11 @@
 package de.c3seidenstrasse.networkcontroller.utils;
 
-import de.c3seidenstrasse.networkcontroller.route.Network;
+import de.c3seidenstrasse.networkcontroller.gui.NetworkScreen;
 
 public class NetworkStarter {
 
-	public static void main(final String[] args)
-			throws NoAttachmentException, RouteNotFoundException, InterruptedException {
-		final Network n = Network.create(false);
-		n.getRoot().create33c3();
+	public static void main(final String[] args) {
+		javafx.application.Application.launch(NetworkScreen.class);
 	}
 
 }
