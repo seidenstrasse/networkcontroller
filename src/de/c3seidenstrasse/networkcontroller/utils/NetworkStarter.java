@@ -6,7 +6,7 @@ public class NetworkStarter {
 
 	public static void main(final String[] args)
 			throws NoAttachmentException, RouteNotFoundException, InterruptedException {
-		final Network n = Network.create();
+		final Network n = Network.create(false);
 		n.getRoot().create33c3();
 	}
 

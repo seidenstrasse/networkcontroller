@@ -87,6 +87,19 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	public abstract Set<IndexedNetworkComponent> getIndexedChildren();
 
 	/**
+	 * outputs the set of all children
+	 *
+	 * @return a set of all children
+	 */
+	public Set<NetworkComponent> getChildren() {
+		final HashSet<NetworkComponent> set = new HashSet<>();
+		final Iterator<IndexedNetworkComponent> i = this.getIndexedChildren().iterator();
+		while (i.hasNext())
+			set.add(i.next().getNc());
+		return set;
+	}
+
+	/**
 	 * adds a {@linkplain NetworkComponent} as a child of this NetworkComponent
 	 * at a given position
 	 *
