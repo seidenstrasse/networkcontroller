@@ -17,7 +17,7 @@
             <VBox alignment="CENTER" spacing="5.0">
                <children>
                   <ComboBox fx:id="childCombobox" prefWidth="150.0" />
-                  <Button mnemonicParsing="false" text="TurnTo" />
+                  <Button mnemonicParsing="false" onAction="#turnToAction" text="TurnTo" />
                </children>
             </VBox>
             <Button mnemonicParsing="false" text="Button" />

@@ -41,5 +41,11 @@ public class NetworkScreenController {
 				return 1;
 			return 0;
 		});
+		this.childCombobox.setVisibleRowCount(this.childCombobox.getItems().size());
+	}
+
+	public void turnToAction() {
+		final IndexedNetworkComponent inc = this.childCombobox.getValue();
+		this.selected.turnTo(inc.getI());
 	}
 }
