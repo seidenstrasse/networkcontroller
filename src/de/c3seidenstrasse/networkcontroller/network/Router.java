@@ -47,7 +47,7 @@ public class Router extends NetworkComponent {
 	}
 
 	@Override
-	public Set<IndexedNetworkComponent> getChildren() {
+	public Set<IndexedNetworkComponent> getIndexedChildren() {
 		return this.childs;
 	}
 

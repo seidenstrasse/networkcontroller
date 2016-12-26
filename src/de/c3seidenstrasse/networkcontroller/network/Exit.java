@@ -34,7 +34,7 @@ public class Exit extends NetworkComponent {
 	}
 
 	@Override
-	public Set<IndexedNetworkComponent> getChildren() {
+	public Set<IndexedNetworkComponent> getIndexedChildren() {
 		return new HashSet<>();
 	}
 

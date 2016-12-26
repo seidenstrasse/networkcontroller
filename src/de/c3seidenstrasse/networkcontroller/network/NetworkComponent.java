@@ -84,7 +84,7 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	 *
 	 * @return a set of all children
 	 */
-	public abstract Set<IndexedNetworkComponent> getChildren();
+	public abstract Set<IndexedNetworkComponent> getIndexedChildren();
 
 	/**
 	 * adds a {@linkplain NetworkComponent} as a child of this NetworkComponent
@@ -115,7 +115,7 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	public boolean hasChild(final NetworkComponent nc) {
 		if (this.equals(nc))
 			return true;
-		final Iterator<IndexedNetworkComponent> i = this.getChildren().iterator();
+		final Iterator<IndexedNetworkComponent> i = this.getIndexedChildren().iterator();
 		while (i.hasNext())
 			if (i.next().getNc().hasChild(nc))
 				return true;
@@ -140,7 +140,7 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 		nc.add(second);
 
 		if (this.hasAllChilds(nc)) {
-			final Iterator<IndexedNetworkComponent> iterator = this.getChildren().iterator();
+			final Iterator<IndexedNetworkComponent> iterator = this.getIndexedChildren().iterator();
 			while (iterator.hasNext()) {
 				final IndexedNetworkComponent current = iterator.next();
 				if (current.getNc().hasAllChilds(nc)) {
@@ -180,6 +180,6 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	public abstract TreeItem<NetworkComponent> getTreeItem();
 
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 }

@@ -37,7 +37,7 @@ public class CodeReader extends NetworkComponent {
 	}
 
 	@Override
-	public Set<IndexedNetworkComponent> getChildren() {
+	public Set<IndexedNetworkComponent> getIndexedChildren() {
 		final Set<IndexedNetworkComponent> set = new HashSet<>();
 		set.add(new IndexedNetworkComponent(this.getChild(), 1));
 		return set;
