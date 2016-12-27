@@ -72,13 +72,13 @@ public class Network implements Runnable {
 	}
 
 	public void addNodeToMap(final Integer id, final NetworkComponent nc) throws IdAlreadyExistsException {
-		if (this.idMap.containsKey(id))
+		if (this.getIdMap().containsKey(id))
 			throw new IdAlreadyExistsException();
-		this.idMap.put(id, nc);
+		this.getIdMap().put(id, nc);
 	}
 
 	public NetworkComponent getNodeById(final Integer id) {
-		return this.idMap.get(id);
+		return this.getIdMap().get(id);
 	}
 
 	public Transport getCurrentTransport() throws NoCurrentTransportException {

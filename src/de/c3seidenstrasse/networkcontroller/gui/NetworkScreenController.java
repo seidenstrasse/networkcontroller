@@ -1,8 +1,14 @@
 package de.c3seidenstrasse.networkcontroller.gui;
 
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+import de.c3seidenstrasse.networkcontroller.network.Exit;
 import de.c3seidenstrasse.networkcontroller.network.IndexedNetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.route.Network;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -15,9 +21,13 @@ public class NetworkScreenController {
 	public NetworkComponent selected;
 	@FXML
 	ComboBox<IndexedNetworkComponent> childCombobox;
+	@FXML
+	ComboBox<Exit> fromDropdown;
+	@FXML
+	ComboBox<Exit> toDropdown;
 
 	public Network init() {
-		this.n = Network.create();
+		this.n = Network.create(false);
 
 		// Netzwerkliste
 		this.selected = this.n.getRoot();
@@ -26,6 +36,17 @@ public class NetworkScreenController {
 		this.ncTree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			this.selected(newValue.getValue());
 		});
+
+		// fill dropdowns
+		final ObservableList<Exit> exits = FXCollections.observableArrayList();
+		final Iterator<Entry<Integer, NetworkComponent>> i = this.n.getIdMap().entrySet().iterator();
+		while (i.hasNext()) {
+			final NetworkComponent current = i.next().getValue();
+			if (current instanceof Exit)
+				exits.add((Exit) current);
+		}
+		this.fromDropdown.setItems(exits);
+		this.toDropdown.setItems(exits);
 
 		return this.n;
 	}
@@ -47,5 +68,9 @@ public class NetworkScreenController {
 	public void turnToAction() {
 		final IndexedNetworkComponent inc = this.childCombobox.getValue();
 		this.selected.turnTo(inc.getI());
+	}
+
+	@FXML
+	public void addRouteAction() {
 	}
 }
