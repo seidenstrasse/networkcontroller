@@ -1,8 +1,11 @@
 package de.c3seidenstrasse.networkcontroller.communication;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -33,7 +36,8 @@ public class SssConnection {
 		private SssNetworkReciever(final Network n) {
 			this.n = n;
 			try {
-				this.socket = new ServerSocket(6789);
+				this.socket = new ServerSocket();
+				this.socket.bind(new InetSocketAddress(InetAddress.getByName("192.168.0.1"), 6789));
 			} catch (final IOException e) {
 				throw new Error(e);
 			}
@@ -44,6 +48,7 @@ public class SssConnection {
 			while (!Thread.interrupted()) {
 				try {
 					final Socket s = this.socket.accept();
+					System.out.println("Connected!");
 					new CodeReaderMessageProcessor(this.n, s);
 				} catch (final IOException e) {
 					throw new Error(e);
