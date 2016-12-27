@@ -30,7 +30,7 @@
                         <ComboBox fx:id="toDropdown" prefWidth="200.0" />
                      </children>
                   </HBox>
-                  <Button mnemonicParsing="false" onAction="#addRouteAction" text="Add" />
+                  <Button fx:id="addTransportButton" mnemonicParsing="false" onAction="#addRouteAction" text="Add" />
                </children>
             </VBox>
          </children>

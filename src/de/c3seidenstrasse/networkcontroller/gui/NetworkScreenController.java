@@ -7,12 +7,18 @@ import de.c3seidenstrasse.networkcontroller.network.Exit;
 import de.c3seidenstrasse.networkcontroller.network.IndexedNetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.route.Network;
+import de.c3seidenstrasse.networkcontroller.route.Transport;
+import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Button;
 
 public class NetworkScreenController {
 	private Network n;
@@ -25,9 +31,11 @@ public class NetworkScreenController {
 	ComboBox<Exit> fromDropdown;
 	@FXML
 	ComboBox<Exit> toDropdown;
+	@FXML
+	Button addTransportButton;
 
 	public Network init() {
-		this.n = Network.create();
+		this.n = Network.create(false);
 
 		// Netzwerkliste
 		this.selected = this.n.getRoot();
@@ -72,5 +80,27 @@ public class NetworkScreenController {
 
 	@FXML
 	public void addRouteAction() {
+		final Exit start = this.fromDropdown.getValue();
+		final Exit ende = this.toDropdown.getValue();
+		if (start == null || ende == null)
+			return;
+		try {
+			final Transport t = new Transport(this.fromDropdown.getValue(), this.toDropdown.getValue());
+			this.n.addTransport(t);
+			this.addTransportButton.setStyle("-fx-base: #b6e7c9;");
+			Platform.runLater(() -> {
+				try {
+					Thread.sleep(1000);
+				} catch (final InterruptedException e) {
+				}
+				NetworkScreenController.this.addTransportButton.setStyle("");
+			});
+		} catch (final RouteNotFoundException e) {
+			final Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Route not found");
+			alert.setHeaderText("works not for you");
+			alert.setContentText("I was not able to find a route between your selected targets!");
+			alert.show();
+		}
 	}
 }
