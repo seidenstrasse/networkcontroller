@@ -1,11 +1,15 @@
 package de.c3seidenstrasse.networkcontroller.network;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
 import com.google.gson.annotations.Expose;
 
+import de.c3seidenstrasse.networkcontroller.communication.CodeReaderMessageProcessor;
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
@@ -15,7 +19,7 @@ import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
 import de.c3seidenstrasse.networkcontroller.utils.TreeIntegrityException;
 import javafx.scene.control.TreeItem;
 
-public class CodeReader extends NetworkComponent {
+public class CodeReader extends NetworkComponent implements Runnable {
 	@Expose
 	final String name = "CodeReader";
 
@@ -26,9 +30,20 @@ public class CodeReader extends NetworkComponent {
 
 	private NetworkComponent child;
 
+	private final ServerSocket socket;
+	private final Thread t;
+
 	public CodeReader(final Integer id, final Network network) throws IdAlreadyExistsException {
 		super(id, network);
 		this.setCurrentExit(1);
+
+		try {
+			this.socket = new ServerSocket(6789);
+		} catch (final IOException e) {
+			throw new Error(e);
+		}
+		this.t = new Thread(this, this.name + "Worker");
+		this.t.start();
 	}
 
 	@Override
@@ -148,6 +163,22 @@ public class CodeReader extends NetworkComponent {
 		root.setExpanded(true);
 		root.getChildren().add(this.child.getTreeItem());
 		return root;
+	}
+
+	@Override
+	public void run() {
+		while (!Thread.interrupted()) {
+			try {
+				final Socket s = this.socket.accept();
+				new CodeReaderMessageProcessor(this.getNetwork(), s);
+			} catch (final IOException e) {
+				throw new Error(e);
+			}
+		}
+	}
+
+	public void interrupt() {
+		this.t.interrupt();
 	}
 
 }
