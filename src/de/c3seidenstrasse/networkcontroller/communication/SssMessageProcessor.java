@@ -1,5 +1,6 @@
 package de.c3seidenstrasse.networkcontroller.communication;
 
+import de.c3seidenstrasse.networkcontroller.network.AirSupplier;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
@@ -20,6 +21,11 @@ public class SssMessageProcessor implements Runnable {
 		System.out.println("SRC: " + this.message[1]);
 		System.out.println("DST: " + this.message[2]);
 		System.out.println("PL1: " + this.message[3]);
+		if (this.message[1] == AirSupplier.CHANGER_ID || this.message[1] == AirSupplier.VACCUUM_ID) {
+			// delegate message to AirSupplier
+			this.n.getAirsupplier().messageRecieved(this.message[0], this.message[1], this.message[3]);
+			return;
+		}
 		switch (this.message[0]) {
 		case 0x00:
 			// Kapsel erkannt
