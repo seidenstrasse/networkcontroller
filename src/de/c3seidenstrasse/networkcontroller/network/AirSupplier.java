@@ -3,7 +3,6 @@ package de.c3seidenstrasse.networkcontroller.network;
 import de.c3seidenstrasse.networkcontroller.route.Network;
 
 public class AirSupplier {
-	public final static byte VACCUUM_ID = (byte) 0xFE;
 	public final static byte CHANGER_ID = (byte) 0xFF;
 	private final static long AIRFLOW_START_MS = 1000;
 	private final static long AIRFLOW_STOP_MS = 2000;
@@ -39,18 +38,18 @@ public class AirSupplier {
 		this.changerState = ChangerState.PUSH;
 	}
 
-	synchronized public void turnForPull() {
+	synchronized private void turnForPull() {
 		if (this.changerState != ChangerState.PULL && this.changerState != ChangerState.PREPAREPULL) {
-			final byte[] message = { 0x01, 0x00, CHANGER_ID, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			final byte[] message = { 0x08, 0x00, CHANGER_ID, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 					0x00, 0x00, 0x00 };
 			this.n.send(message);
 			this.changerState = ChangerState.PREPAREPULL;
 		}
 	}
 
-	synchronized public void turnForPush() {
+	synchronized private void turnForPush() {
 		if (this.changerState != ChangerState.PUSH && this.changerState != ChangerState.PREPAREPUSH) {
-			final byte[] message = { 0x01, 0x00, CHANGER_ID, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			final byte[] message = { 0x08, 0x00, CHANGER_ID, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 					0x00, 0x00, 0x00 };
 			this.n.send(message);
 			this.changerState = ChangerState.PREPAREPUSH;
@@ -66,14 +65,11 @@ public class AirSupplier {
 			} catch (final InterruptedException e) {
 			}
 		}
-		final byte[] message = { 0x08, 0x00, VACCUUM_ID, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00 };
-		this.n.send(message);
+		this.changerState = ChangerState.PULL;
 		try {
 			this.wait(AIRFLOW_START_MS);
 		} catch (final InterruptedException e) {
 		}
-		this.changerState = ChangerState.PULL;
 	}
 
 	synchronized public void push() {
@@ -85,18 +81,15 @@ public class AirSupplier {
 			} catch (final InterruptedException e) {
 			}
 		}
-		final byte[] message = { 0x08, 0x00, VACCUUM_ID, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00 };
-		this.n.send(message);
+		this.changerState = ChangerState.PUSH;
 		try {
 			this.wait(AIRFLOW_START_MS);
 		} catch (final InterruptedException e) {
 		}
-		this.changerState = ChangerState.PUSH;
 	}
 
 	synchronized public void stop() {
-		final byte[] message = { 0x08, 0x00, VACCUUM_ID, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		final byte[] message = { 0x08, 0x00, CHANGER_ID, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00 };
 		this.n.send(message);
 		try {

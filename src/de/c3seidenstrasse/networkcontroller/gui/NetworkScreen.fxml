@@ -14,10 +14,23 @@
    <bottom>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox alignment="CENTER" spacing="5.0">
+            <VBox alignment="TOP_CENTER" spacing="5.0">
                <children>
+                  <Label text="Turn Router" />
                   <ComboBox fx:id="childCombobox" prefWidth="150.0" />
-                  <Button mnemonicParsing="false" onAction="#turnToAction" text="TurnTo" />
+                  <Button mnemonicParsing="false" onAction="#turnToAction" text="Send" />
+               </children>
+            </VBox>
+            <VBox alignment="TOP_CENTER" prefHeight="300.0" prefWidth="400.0" spacing="5.0">
+               <children>
+                  <Label text="Add Transport" />
+                  <HBox spacing="5.0">
+                     <children>
+                        <ComboBox fx:id="fromDropdown" prefWidth="200.0" />
+                        <ComboBox fx:id="toDropdown" prefWidth="200.0" />
+                     </children>
+                  </HBox>
+                  <Button fx:id="addTransportButton" mnemonicParsing="false" onAction="#addRouteAction" text="Add" />
                </children>
             </VBox>
          </children>
