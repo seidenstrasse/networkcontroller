@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Queue;
 
 import de.c3seidenstrasse.networkcontroller.communication.SssConnection;
+import de.c3seidenstrasse.networkcontroller.network.AirSupplier;
 import de.c3seidenstrasse.networkcontroller.network.CodeReader;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.states.IdleState;
@@ -27,9 +28,12 @@ public class Network implements Runnable {
 
 	private final Map<Integer, NetworkComponent> idMap;
 
+	private final AirSupplier airsupplier;
+
 	private Network(final boolean withNetwork) {
 		this.queue = new LinkedList<>();
 		this.idMap = new HashMap<>();
+		this.airsupplier = new AirSupplier(this);
 		try {
 			this.root = new CodeReader(0xFD, this);
 		} catch (final IdAlreadyExistsException e) {
@@ -90,18 +94,6 @@ public class Network implements Runnable {
 		this.awake();
 	}
 
-	public void startPushAirflow() {
-		System.out.println("Saubsauger �berdruck wurde gestartet!");
-	}
-
-	public void startPullAirflow() {
-		System.out.println("Saubsauger Unterdruck wurde gestartet!");
-	}
-
-	public void stopAirflow() {
-		System.out.println("Luftfluss wurde gestoppt!");
-	}
-
 	public NetworkState getState() {
 		return this.state;
 	}
@@ -140,18 +132,20 @@ public class Network implements Runnable {
 				@Override
 				protected void handle(final PreparePullState preparePullState) {
 					if (preparePullState.isFinished()) {
-						System.out.println("Kapsel wird jetzt gezogen!");
+						System.out.println("NETWORK: PreparePullState finished");
 						final PullState ps = new PullState(preparePullState.getCurrentTransport());
 						Network.this.setState(ps);
+						System.out.println("NETWORK: Now in PullState");
 					}
 				}
 
 				@Override
 				protected void handle(final IdleState state) {
 					if (!Network.this.queue.isEmpty()) {
-						System.out.println("Router werden f�r das Saugen eingestellt! (PreparePull)");
+						System.out.println("NETWORK: IdleState finished");
 						final RouterTurningState pps = new PreparePullState(Network.this.queue.peek());
 						Network.this.setState(pps);
+						System.out.println("NETWORK: Now in PreparePullState");
 
 					}
 				}
@@ -159,30 +153,33 @@ public class Network implements Runnable {
 				@Override
 				protected void accept(final PullState pullState) {
 					if (pullState.isFinished()) {
-						System.out.println("Router werden f�r das Pusten eingestellt (PreparePush)!");
+						System.out.println("NETWORK: PullState finished");
 						final PreparePushState pps = new PreparePushState(pullState.getCurrentTransport());
 						Network.this.setState(pps);
+						System.out.println("NETWORK: Now in PreparePushState");
 					}
 				}
 
 				@Override
 				protected void accept(final PreparePushState preparePushState) {
 					if (preparePushState.isFinished()) {
-						System.out.println("Es wird gepustet! (Push)");
+						System.out.println("NETWORK: preparePushState finished");
 						final PushState ps = new PushState(preparePushState.getCurrentTransport());
 						Network.this.setState(ps);
+						System.out.println("NETWORK: Now in PushState");
 					}
 				}
 
 				@Override
 				protected void accept(final PushState pushState) {
 					if (pushState.isFinished()) {
-						System.out.println("Transport abgeschlossen!");
+						System.out.println("NETWORK: pushState finished");
 						Network.this.queue.remove();
 						if (!Network.this.queue.isEmpty())
 							Network.this.awake();
 						final IdleState is = IdleState.getInstance();
 						Network.this.setState(is);
+						System.out.println("NETWORK: Now in idleState");
 					}
 				}
 			});
@@ -203,5 +200,9 @@ public class Network implements Runnable {
 		if (this.sssc != null)
 			this.sssc.send(message);
 
+	}
+
+	public AirSupplier getAirsupplier() {
+		return this.airsupplier;
 	}
 }
