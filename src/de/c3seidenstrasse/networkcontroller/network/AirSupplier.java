@@ -66,6 +66,10 @@ public class AirSupplier {
 			}
 		}
 		this.changerState = ChangerState.PULL;
+		try {
+			this.wait(AIRFLOW_START_MS);
+		} catch (final InterruptedException e) {
+		}
 	}
 
 	synchronized public void push() {
@@ -78,6 +82,10 @@ public class AirSupplier {
 			}
 		}
 		this.changerState = ChangerState.PUSH;
+		try {
+			this.wait(AIRFLOW_START_MS);
+		} catch (final InterruptedException e) {
+		}
 	}
 
 	synchronized public void stop() {
