@@ -15,7 +15,7 @@ public class PushState extends CapsuleTransportState {
 
 	@Override
 	public void doYourThing() {
-		this.t.getNetwork().startPushAirflow();
+		this.t.getNetwork().getAirsupplier().push();
 	}
 
 }

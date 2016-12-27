@@ -27,7 +27,7 @@ public abstract class CapsuleTransportState extends NetworkState implements Obse
 	public void update(final NetworkComponent nc) {
 		System.out.println("Kapsel hat das Ziel " + this.target.getName() + " passiert!");
 		this.t.getHighestPoint().deregister(this, ObserverEvent.CAPSULEPASS);
-		this.t.getNetwork().stopAirflow();
+		this.t.getNetwork().getAirsupplier().stop();
 		this.finished = true;
 		this.t.getNetwork().awake();
 	}

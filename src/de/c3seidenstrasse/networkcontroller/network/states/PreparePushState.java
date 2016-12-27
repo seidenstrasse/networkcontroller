@@ -11,6 +11,7 @@ public class PreparePushState extends RouterTurningState {
 
 	public PreparePushState(final Transport t) {
 		super(t);
+		this.t.getNetwork().getAirsupplier().turnForPush();
 		synchronized (this) {
 			this.waiting.addAll(this.getCurrentTransport().getDown());
 		}

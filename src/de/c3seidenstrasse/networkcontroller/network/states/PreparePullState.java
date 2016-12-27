@@ -11,6 +11,7 @@ public final class PreparePullState extends RouterTurningState {
 
 	public PreparePullState(final Transport t) {
 		super(t);
+		this.t.getNetwork().getAirsupplier().turnForPull();
 		synchronized (this) {
 			this.waiting.addAll(this.getCurrentTransport().getAirflow());
 			this.waiting.addAll(this.getCurrentTransport().getUp());
