@@ -35,7 +35,7 @@ public class NetworkScreenController {
 	Button addTransportButton;
 
 	public Network init() {
-		this.n = Network.create(false);
+		this.n = Network.create();
 
 		// Netzwerkliste
 		this.selected = this.n.getRoot();
