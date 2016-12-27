@@ -205,4 +205,8 @@ public class Network implements Runnable {
 	public AirSupplier getAirsupplier() {
 		return this.airsupplier;
 	}
+
+	public Map<Integer, NetworkComponent> getIdMap() {
+		return idMap;
+	}
 }
