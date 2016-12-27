@@ -103,4 +103,19 @@ public class NetworkScreenController {
 			alert.show();
 		}
 	}
+
+	@FXML
+	public void pullAction() {
+		this.n.getAirsupplier().pull();
+	}
+
+	@FXML
+	public void pushAction() {
+		this.n.getAirsupplier().push();
+	}
+
+	@FXML
+	public void stopAction() {
+		this.n.getAirsupplier().stop();
+	}
 }

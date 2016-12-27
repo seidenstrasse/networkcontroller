@@ -33,6 +33,13 @@
                   <Button fx:id="addTransportButton" mnemonicParsing="false" onAction="#addRouteAction" text="Add" />
                </children>
             </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#pullAction" text="Pull" />
+                  <Button mnemonicParsing="false" onAction="#pushAction" text="Push" />
+                  <Button mnemonicParsing="false" onAction="#stopAction" text="Stop" />
+               </children>
+            </VBox>
          </children>
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
