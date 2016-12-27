@@ -26,10 +26,12 @@ public class CodeReaderMessageProcessor implements Runnable {
 			int bytesread = 0;
 			while (bytesread < 16) {
 				int read = input.read();
+				String readString = String.valueOf(read);
+				Byte readbyte = new Byte(readString);
 				if (read != -1) {
-					message[bytesread] = (byte) read;
+					message[bytesread] = readbyte;
+					System.out.println(readbyte);
 					bytesread++;
-					System.out.println(read);
 				} else {
 					synchronized (this) {
 						try {
@@ -40,8 +42,7 @@ public class CodeReaderMessageProcessor implements Runnable {
 				}
 			}
 
-				new SssMessageProcessor(message, this.n);
-
+			new Thread(new SssMessageProcessor(message, this.n)).start();
 
 			this.s.close();
 		} catch (final IOException e) {
