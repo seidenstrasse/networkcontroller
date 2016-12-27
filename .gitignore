@@ -17,3 +17,4 @@ hs_err_pid*
 .project
 **/.settings/
 /bin/
+src/de/c3seidenstrasse/networkcontroller/route/NetworkTest.java
