@@ -111,9 +111,9 @@ public class CodeReader extends NetworkComponent {
 			alice.createExitAt(1, 1, "Seidenstrasse", 5);
 			alice.createExitAt(2, 2, "Spacestation", 20);
 			final Router betty = alice.createRouterAt(3, 22, "Betty", 30);
-			betty.createExitAt(1, 3, "Eingang", 50);
-			betty.createExitAt(2, 4, "Sendezentrum", 20);
-			final Router caty = betty.createRouterAt(3, 33, "Caty", 40);
+			betty.createExitAt(3, 3, "Eingang", 50);
+			betty.createExitAt(0, 4, "Sendezentrum", 20);
+			final Router caty = betty.createRouterAt(1, 33, "Caty", 40);
 			caty.createExitAt(1, 5, "Wizzard", 100);
 			caty.createExitAt(2, 6, "Kidspace", 110);
 			caty.createExitAt(3, 7, "Coffeenerds", 120);
