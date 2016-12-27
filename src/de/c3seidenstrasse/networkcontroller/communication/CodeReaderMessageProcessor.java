@@ -21,16 +21,28 @@ public class CodeReaderMessageProcessor implements Runnable {
 	public void run() {
 		try {
 			final InputStream input = this.s.getInputStream();
-			final byte[] message = {};
+			final byte[] message = new byte[16];
 
 			int bytesread = 0;
-			while (input.available() > 1 && bytesread < 16) {
-				bytesread = bytesread + input.read(message);
+			while (bytesread < 16) {
+				int read = input.read();
+				String readString = String.valueOf(read);
+				Byte readbyte = new Byte(readString);
+				if (read != -1) {
+					message[bytesread] = readbyte;
+					System.out.println(readbyte);
+					bytesread++;
+				} else {
+					synchronized (this) {
+						try {
+							this.wait(100);
+						} catch (InterruptedException e) {
+						}
+					}
+				}
 			}
 
-			if (message.length == 16) {
-				new SssMessageProcessor(message, this.n);
-			}
+			new Thread(new SssMessageProcessor(message, this.n)).start();
 
 			this.s.close();
 		} catch (final IOException e) {

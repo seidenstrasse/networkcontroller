@@ -35,7 +35,7 @@ public class Network implements Runnable {
 		this.idMap = new HashMap<>();
 		this.airsupplier = new AirSupplier(this);
 		try {
-			this.root = new CodeReader(0xFD, this);
+			this.root = new CodeReader(0x7F, this);
 		} catch (final IdAlreadyExistsException e) {
 			throw new Error();
 		}
