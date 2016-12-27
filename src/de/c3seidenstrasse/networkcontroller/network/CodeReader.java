@@ -111,15 +111,15 @@ public class CodeReader extends NetworkComponent {
 			alice.createExitAt(1, 1, "Seidenstrasse", 5);
 			alice.createExitAt(2, 2, "Spacestation", 20);
 			final Router betty = alice.createRouterAt(3, 22, "Betty", 30);
-			betty.createExitAt(1, 3, "Eingang", 50);
-			betty.createExitAt(2, 4, "Sendezentrum", 20);
-			final Router caty = betty.createRouterAt(3, 33, "Caty", 40);
-			caty.createExitAt(1, 5, "Wizzard", 100);
-			caty.createExitAt(2, 6, "Kidspace", 110);
-			caty.createExitAt(3, 7, "Coffeenerds", 120);
+			betty.createExitAt(2, 3, "Eingang", 50);
+			betty.createExitAt(1, 4, "Sendezentrum", 20);
+			final Router caty = betty.createRouterAt(0, 33, "Caty", 40);
+			caty.createExitAt(5, 5, "Wizzard", 100);
+			caty.createExitAt(1, 6, "Kidspace", 110);
+			caty.createExitAt(0, 7, "Coffeenerds", 120);
 			caty.createExitAt(4, 8, "Lounge", 130);
-			caty.createExitAt(5, 9, "FoodHacker", 140);
-			caty.createExitAt(6, 10, "Monolith", 150);
+			caty.createExitAt(3, 9, "FoodHacker", 140);
+			caty.createExitAt(2, 10, "Monolith", 150);
 		} catch (final NoAttachmentException | IdAlreadyExistsException e) {
 			e.printStackTrace();
 		}
