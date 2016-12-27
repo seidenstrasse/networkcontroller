@@ -5,17 +5,20 @@ import com.google.gson.annotations.Expose;
 public final class IndexedNetworkComponent {
 	@Override
 	public String toString() {
-		return "[nc=" + this.nc + ", i=" + this.i + "]";
+		return "[nc=" + this.nc + ", i=" + this.i + ", transDur=" + this.transferDuration + "]";
 	}
 
 	@Expose
 	private final NetworkComponent nc;
 	@Expose
 	private final Integer i;
+	@Expose
+	private final Integer transferDuration;
 
-	public IndexedNetworkComponent(final NetworkComponent nc, final Integer i) {
+	public IndexedNetworkComponent(final NetworkComponent nc, final Integer i, final int transferDuration) {
 		this.nc = nc;
 		this.i = i;
+		this.transferDuration = transferDuration;
 	}
 
 	final public Integer getI() {
@@ -55,5 +58,9 @@ public final class IndexedNetworkComponent {
 
 	final public NetworkComponent getNc() {
 		return this.nc;
+	}
+
+	public Integer getTransferDuration() {
+		return this.transferDuration;
 	}
 }

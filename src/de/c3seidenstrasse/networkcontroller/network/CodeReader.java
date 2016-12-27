@@ -39,12 +39,12 @@ public class CodeReader extends NetworkComponent {
 	@Override
 	public Set<IndexedNetworkComponent> getIndexedChildren() {
 		final Set<IndexedNetworkComponent> set = new HashSet<>();
-		set.add(new IndexedNetworkComponent(this.getChild(), 1));
+		set.add(new IndexedNetworkComponent(this.getChild(), 1, 5));
 		return set;
 	}
 
 	@Override
-	protected void addChildAt(final Integer position, final NetworkComponent nc)
+	protected void addChildAt(final Integer position, final NetworkComponent nc, final int transferDuration)
 			throws TreeIntegrityException, NoAttachmentException {
 		if (!position.equals(1))
 			throw new NoAttachmentException("There is no attachment at position " + position.toString());
@@ -52,11 +52,11 @@ public class CodeReader extends NetworkComponent {
 	}
 
 	@Override
-	public Exit createExitAt(final Integer position, final Integer id, final String name)
+	public Exit createExitAt(final Integer position, final Integer id, final String name, final int transferDuration)
 			throws NoAttachmentException, IdAlreadyExistsException {
 		final Exit e = new Exit(id, name, this.getNetwork(), this);
 		try {
-			this.addChildAt(position, e);
+			this.addChildAt(position, e, transferDuration);
 		} catch (final TreeIntegrityException e1) {
 			throw new Error(); // should not happen
 		}
@@ -64,11 +64,11 @@ public class CodeReader extends NetworkComponent {
 	}
 
 	@Override
-	public Router createRouterAt(final Integer position, final Integer id, final String name)
-			throws NoAttachmentException, IdAlreadyExistsException {
+	public Router createRouterAt(final Integer position, final Integer id, final String name,
+			final int transferDuration) throws NoAttachmentException, IdAlreadyExistsException {
 		final Router r = new Router(id, name, this.getNetwork(), this);
 		try {
-			this.addChildAt(position, r);
+			this.addChildAt(position, r, transferDuration);
 		} catch (final TreeIntegrityException e1) {
 			throw new Error(); // should not happen
 		}
@@ -78,7 +78,7 @@ public class CodeReader extends NetworkComponent {
 	@Override
 	public void fillRoute(final Transport t, final NetworkComponent target) {
 		if (this.hasChild(target)) {
-			t.addDown(new IndexedNetworkComponent(this, 1));
+			t.addDown(new IndexedNetworkComponent(this, 1, 5));
 			this.getChild().fillRoute(t, target);
 		} else
 			throw new Error();
@@ -92,6 +92,14 @@ public class CodeReader extends NetworkComponent {
 	}
 
 	@Override
+	public IndexedNetworkComponent getIncOf(final NetworkComponent child)
+			throws NotFoundException, NoAttachmentException {
+		if (this.getChild().equals(child))
+			return new IndexedNetworkComponent(this.getChild(), 1, 5);
+		throw new NotFoundException();
+	}
+
+	@Override
 	public LinkedList<IndexedNetworkComponent> RouteTo(final NetworkComponent target) throws RouteNotFoundException {
 		return this.getChild().RouteTo(target);
 	}
@@ -99,19 +107,19 @@ public class CodeReader extends NetworkComponent {
 	public void create33c3() {
 		final CodeReader cr = this;
 		try {
-			final Router alice = cr.createRouterAt(1, 11, "Alice");
-			alice.createExitAt(1, 1, "Seidenstrasse");
-			alice.createExitAt(2, 2, "Spacestation");
-			final Router betty = alice.createRouterAt(3, 22, "Betty");
-			betty.createExitAt(1, 3, "Eingang");
-			betty.createExitAt(2, 4, "Sendezentrum");
-			final Router caty = betty.createRouterAt(3, 33, "Caty");
-			caty.createExitAt(1, 5, "Wizzard");
-			caty.createExitAt(2, 6, "Kidspace");
-			caty.createExitAt(3, 7, "Coffeenerds");
-			caty.createExitAt(4, 8, "Lounge");
-			caty.createExitAt(5, 9, "FoodHacker");
-			caty.createExitAt(6, 10, "Monolith");
+			final Router alice = cr.createRouterAt(1, 11, "Alice", 5);
+			alice.createExitAt(1, 1, "Seidenstrasse", 5);
+			alice.createExitAt(2, 2, "Spacestation", 20);
+			final Router betty = alice.createRouterAt(3, 22, "Betty", 30);
+			betty.createExitAt(1, 3, "Eingang", 50);
+			betty.createExitAt(2, 4, "Sendezentrum", 20);
+			final Router caty = betty.createRouterAt(3, 33, "Caty", 40);
+			caty.createExitAt(1, 5, "Wizzard", 100);
+			caty.createExitAt(2, 6, "Kidspace", 110);
+			caty.createExitAt(3, 7, "Coffeenerds", 120);
+			caty.createExitAt(4, 8, "Lounge", 130);
+			caty.createExitAt(5, 9, "FoodHacker", 140);
+			caty.createExitAt(6, 10, "Monolith", 150);
 		} catch (final NoAttachmentException | IdAlreadyExistsException e) {
 			e.printStackTrace();
 		}

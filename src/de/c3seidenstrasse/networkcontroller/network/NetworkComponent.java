@@ -59,6 +59,9 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	 */
 	public abstract Integer getPositionOf(final NetworkComponent child) throws NotFoundException, NoAttachmentException;
 
+	public abstract IndexedNetworkComponent getIncOf(final NetworkComponent child)
+			throws NotFoundException, NoAttachmentException;
+
 	/**
 	 * returns the {@linkplain NetworkComponent} which is at the position
 	 * {@code position}
@@ -112,13 +115,13 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	 * @throws TreeIntegrityException
 	 *             if this would create a circle
 	 */
-	protected abstract void addChildAt(Integer position, NetworkComponent nc)
+	protected abstract void addChildAt(Integer position, NetworkComponent nc, int transferDuration)
 			throws NoAttachmentException, TreeIntegrityException, SpaceOccupiedException;
 
-	public abstract Exit createExitAt(Integer position, final Integer id, String name)
+	public abstract Exit createExitAt(Integer position, final Integer id, String name, int transferDuration)
 			throws NoAttachmentException, IdAlreadyExistsException;
 
-	public abstract Router createRouterAt(Integer position, final Integer id, String Name)
+	public abstract Router createRouterAt(Integer position, final Integer id, String Name, int transferDuration)
 			throws NoAttachmentException, IdAlreadyExistsException;
 
 	public abstract void fillRoute(Transport t, NetworkComponent target);

@@ -10,6 +10,7 @@ import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
+import de.c3seidenstrasse.networkcontroller.utils.NotFoundException;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
 import javafx.scene.control.TreeItem;
 
@@ -39,12 +40,14 @@ public class Exit extends NetworkComponent {
 	}
 
 	@Override
-	protected void addChildAt(final Integer position, final NetworkComponent nc) throws NoAttachmentException {
+	protected void addChildAt(final Integer position, final NetworkComponent nc, final int transferDuration)
+			throws NoAttachmentException {
 		throw new NoAttachmentException(Exit.AN_EXIT_HAS_NO_ATTACHMENT);
 	}
 
 	@Override
-	public Exit createExitAt(final Integer position, final Integer id, final String name) throws NoAttachmentException {
+	public Exit createExitAt(final Integer position, final Integer id, final String name, final int transferDuration)
+			throws NoAttachmentException {
 		throw new NoAttachmentException(Exit.AN_EXIT_HAS_NO_ATTACHMENT);
 	}
 
@@ -54,23 +57,32 @@ public class Exit extends NetworkComponent {
 	}
 
 	@Override
-	public Router createRouterAt(final Integer position, final Integer id, final String name)
-			throws NoAttachmentException {
+	public Router createRouterAt(final Integer position, final Integer id, final String name,
+			final int transferDuration) throws NoAttachmentException {
 		throw new NoAttachmentException(Exit.AN_EXIT_HAS_NO_ATTACHMENT);
 	}
 
 	@Override
 	public void fillRoute(final Transport t, final NetworkComponent target) {
 		if (!this.hasChild(target)) {
-			t.addUp(new IndexedNetworkComponent(this, 1));
+			try {
+				t.addUp(new IndexedNetworkComponent(this, 1, this.parent.getIncOf(this).getTransferDuration()));
+			} catch (NotFoundException | NoAttachmentException e) {
+				// should not happen
+			}
 			this.parent.fillRoute(t, target);
 		} else {
-			t.addDown(new IndexedNetworkComponent(this, 1));
+			t.addDown(new IndexedNetworkComponent(this, 1, 5));
 		}
 	}
 
 	@Override
 	public Integer getPositionOf(final NetworkComponent child) throws NoAttachmentException {
+		throw new NoAttachmentException(Exit.AN_EXIT_HAS_NO_ATTACHMENT);
+	}
+
+	@Override
+	public IndexedNetworkComponent getIncOf(final NetworkComponent child) throws NoAttachmentException {
 		throw new NoAttachmentException(Exit.AN_EXIT_HAS_NO_ATTACHMENT);
 	}
 

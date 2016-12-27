@@ -52,9 +52,9 @@ public class Router extends NetworkComponent {
 	}
 
 	@Override
-	public void addChildAt(final Integer position, final NetworkComponent nc)
+	public void addChildAt(final Integer position, final NetworkComponent nc, final int transferDuration)
 			throws TreeIntegrityException, SpaceOccupiedException {
-		this.addChild(new IndexedNetworkComponent(nc, position));
+		this.addChild(new IndexedNetworkComponent(nc, position, transferDuration));
 	}
 
 	// pull up?
@@ -65,6 +65,16 @@ public class Router extends NetworkComponent {
 			final IndexedNetworkComponent current = i.next();
 			if (current.getNc().equals(child))
 				return current.getI();
+		}
+		throw new NotFoundException("No Position found for " + child.toString());
+	}
+
+	public IndexedNetworkComponent getIncOf(final NetworkComponent child) throws NotFoundException {
+		final Iterator<IndexedNetworkComponent> i = this.childs.iterator();
+		while (i.hasNext()) {
+			final IndexedNetworkComponent current = i.next();
+			if (current.getNc().equals(child))
+				return current;
 		}
 		throw new NotFoundException("No Position found for " + child.toString());
 	}
@@ -101,11 +111,11 @@ public class Router extends NetworkComponent {
 	}
 
 	@Override
-	public Exit createExitAt(final Integer position, final Integer id, final String name)
+	public Exit createExitAt(final Integer position, final Integer id, final String name, final int transferDuration)
 			throws IdAlreadyExistsException {
 		final Exit e = new Exit(id, name, this.getNetwork(), this);
 		try {
-			this.addChildAt(position, e);
+			this.addChildAt(position, e, transferDuration);
 		} catch (SpaceOccupiedException | TreeIntegrityException e1) {
 			throw new Error(); // should not happen
 		}
@@ -113,11 +123,11 @@ public class Router extends NetworkComponent {
 	}
 
 	@Override
-	public Router createRouterAt(final Integer position, final Integer id, final String name)
-			throws IdAlreadyExistsException {
+	public Router createRouterAt(final Integer position, final Integer id, final String name,
+			final int transferDuration) throws IdAlreadyExistsException {
 		final Router r = new Router(id, name, this.getNetwork(), this);
 		try {
-			this.addChildAt(position, r);
+			this.addChildAt(position, r, transferDuration);
 		} catch (final TreeIntegrityException | SpaceOccupiedException e) {
 			throw new Error(); // Should not happen
 		}
@@ -141,11 +151,14 @@ public class Router extends NetworkComponent {
 	public void fillRoute(final Transport t, final NetworkComponent target) {
 		if (this.hasChild(target)) {
 			// ziel ist unter mir, down list
-			Integer nextExitFor;
+			final Integer nextExitFor;
 			try {
-				nextExitFor = this.getNextExitFor(target).getI();
-				t.addDown(new IndexedNetworkComponent(this, nextExitFor));
-				this.getChildAt(nextExitFor).fillRoute(t, target);
+				final IndexedNetworkComponent inc = this.getNextExitFor(target);
+				t.addDown(new IndexedNetworkComponent(this, inc.getI(), inc.getTransferDuration()));
+				this.getChildAt(inc.getI()).fillRoute(t, target); // TODO
+																	// replace
+																	// by
+																	// inc.getNc()
 			} catch (final NoAttachmentException | NotFoundException e) {
 				throw new Error(); // should not happen, structure is not
 									// correct
@@ -153,7 +166,8 @@ public class Router extends NetworkComponent {
 		} else {
 			// ziel ist über mir, up list
 			try {
-				t.addUp(new IndexedNetworkComponent(this, this.getPositionOf(t.getLastUp())));
+				final IndexedNetworkComponent deruntermir = this.getIncOf(t.getLastUp());
+				t.addUp(new IndexedNetworkComponent(this, deruntermir.getI(), deruntermir.getTransferDuration()));
 			} catch (final NotFoundException e) {
 				throw new Error(); // should not happen, structure is not
 									// correct
@@ -180,7 +194,7 @@ public class Router extends NetworkComponent {
 				throw new RouteNotFoundException(e);
 			}
 			route = via.getNc().RouteTo(target);
-			route.addFirst(new IndexedNetworkComponent(this, via.getI()));
+			route.addFirst(new IndexedNetworkComponent(this, via.getI(), via.getTransferDuration()));
 		}
 		return route;
 	}
