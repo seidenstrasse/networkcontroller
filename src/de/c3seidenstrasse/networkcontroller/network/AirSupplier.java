@@ -3,29 +3,113 @@ package de.c3seidenstrasse.networkcontroller.network;
 import de.c3seidenstrasse.networkcontroller.route.Network;
 
 public class AirSupplier {
-	private final static byte VACCUUM_ID = (byte) 0xFE;
-	private final static byte CHANGER_ID = (byte) 0xFF;
+	public final static byte VACCUUM_ID = (byte) 0xFE;
+	public final static byte CHANGER_ID = (byte) 0xFF;
+	private final static long AIRFLOW_START_MS = 1000;
+	private final static long AIRFLOW_STOP_MS = 2000;
 	private final Network n;
-	private final AirState airstate;
+	private ChangerState changerState;
 
 	public AirSupplier(final Network n) {
 		this.n = n;
-		this.airstate = AirState.UNKNOWN;
+		this.changerState = ChangerState.UNKNOWN;
 	}
 
-	public void pull() {
-		throw new UnsupportedOperationException();
+	synchronized public void messageRecieved(final byte type, final byte src, final byte payload) {
+		if (type == 0x02 && src == CHANGER_ID) {
+			switch (payload) {
+			case 0x01:
+				this.preparePullFinished();
+				break;
+			case 0x02:
+				this.preparePushFinished();
+				break;
+			default:
+				this.changerState = ChangerState.UNKNOWN;
+				break;
+			}
+		}
 	}
 
-	public void push() {
-		throw new UnsupportedOperationException();
+	synchronized public void preparePullFinished() {
+		this.changerState = ChangerState.PULL;
 	}
 
-	public void stop() {
-		throw new UnsupportedOperationException();
+	synchronized public void preparePushFinished() {
+		this.changerState = ChangerState.PUSH;
 	}
 
-	public enum AirState {
-		UNKNOWN, OFF, PULL, PUSH
+	synchronized public void turnForPull() {
+		if (this.changerState != ChangerState.PULL && this.changerState != ChangerState.PREPAREPULL) {
+			final byte[] message = { 0x01, 0x00, CHANGER_ID, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00 };
+			this.n.send(message);
+			this.changerState = ChangerState.PREPAREPULL;
+		}
+	}
+
+	synchronized public void turnForPush() {
+		if (this.changerState != ChangerState.PUSH && this.changerState != ChangerState.PREPAREPUSH) {
+			final byte[] message = { 0x01, 0x00, CHANGER_ID, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00 };
+			this.n.send(message);
+			this.changerState = ChangerState.PREPAREPUSH;
+		}
+	}
+
+	synchronized public void pull() {
+		this.turnForPull();
+		// TODO busy waiting
+		while (this.changerState != ChangerState.PULL) {
+			try {
+				this.wait(100);
+			} catch (final InterruptedException e) {
+			}
+		}
+		final byte[] message = { 0x08, 0x00, VACCUUM_ID, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x00 };
+		this.n.send(message);
+		try {
+			this.wait(AIRFLOW_START_MS);
+		} catch (final InterruptedException e) {
+		}
+		this.changerState = ChangerState.PULL;
+	}
+
+	synchronized public void push() {
+		this.turnForPush();
+		// TODO busy waiting
+		while (this.changerState != ChangerState.PUSH) {
+			try {
+				this.wait(100);
+			} catch (final InterruptedException e) {
+			}
+		}
+		final byte[] message = { 0x08, 0x00, VACCUUM_ID, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x00 };
+		this.n.send(message);
+		try {
+			this.wait(AIRFLOW_START_MS);
+		} catch (final InterruptedException e) {
+		}
+		this.changerState = ChangerState.PUSH;
+	}
+
+	synchronized public void stop() {
+		final byte[] message = { 0x08, 0x00, VACCUUM_ID, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x00 };
+		this.n.send(message);
+		try {
+			this.wait(AIRFLOW_STOP_MS);
+		} catch (final InterruptedException e) {
+		}
+	}
+
+	public ChangerState getAirstate() {
+		return this.changerState;
+	}
+
+	public enum ChangerState {
+		UNKNOWN, OFF, PULL, PUSH, PREPAREPULL, PREPAREPUSH
 	}
 }
