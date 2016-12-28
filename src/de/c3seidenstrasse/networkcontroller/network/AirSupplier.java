@@ -39,33 +39,25 @@ public class AirSupplier {
 	}
 
 	synchronized private void turnForPull() {
-			final byte[] message = { 0x08, 0x00, CHANGER_ID, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-					0x00, 0x00, 0x00 };
-			this.n.send(message);
+		final byte[] message = { 0x08, 0x00, CHANGER_ID, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x00 };
+		this.n.send(message);
 	}
 
 	synchronized private void turnForPush() {
-			final byte[] message = { 0x08, 0x00, CHANGER_ID, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-					0x00, 0x00, 0x00 };
-			this.n.send(message);
+		final byte[] message = { 0x08, 0x00, CHANGER_ID, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x00 };
+		this.n.send(message);
 	}
 
 	synchronized public void pull() {
 		this.turnForPull();
 		System.out.println("AIRSUPPLY: is Pulling");
-		try {
-			this.wait(AIRFLOW_START_MS);
-		} catch (final InterruptedException e) {
-		}
 	}
 
 	synchronized public void push() {
 		this.turnForPush();
 		System.out.println("AIRSUPPLY: is Pushing");
-		try {
-			this.wait(AIRFLOW_START_MS);
-		} catch (final InterruptedException e) {
-		}
 	}
 
 	synchronized public void stop() {
@@ -73,10 +65,6 @@ public class AirSupplier {
 				0x00, 0x00, 0x00 };
 		this.n.send(message);
 		System.out.println("AIRSUPPLY: Stopped");
-		try {
-			this.wait(AIRFLOW_STOP_MS);
-		} catch (final InterruptedException e) {
-		}
 	}
 
 	public ChangerState getAirstate() {
