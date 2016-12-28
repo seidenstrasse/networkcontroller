@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -15,7 +14,7 @@ public class SssConnection {
 	private final Network n;
 	private final SssSender sender;
 	private final SssBusReciever busReciever;
-	//private final SssNetworkReciever networkReciever;
+	// private final SssNetworkReciever networkReciever;
 
 	public SssConnection(final Network n, final String connection) {
 		this.n = n;
@@ -23,8 +22,8 @@ public class SssConnection {
 
 		this.busReciever = new SssBusReciever(this.n);
 		new Thread(this.busReciever, "SssBusReciever").start();
-		//this.networkReciever = new SssNetworkReciever(this.n);
-		//new Thread(this.networkReciever, "SssNetworkReciever").start();
+		// this.networkReciever = new SssNetworkReciever(this.n);
+		// new Thread(this.networkReciever, "SssNetworkReciever").start();
 		this.sender = new SssSender();
 		new Thread(this.sender, "SssSender").start();
 	}
