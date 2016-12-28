@@ -66,15 +66,20 @@ public class SssConnection {
 
 	private class SssBusReciever implements Runnable {
 		private final Network n;
+		private boolean stopped = false;
 
 		private SssBusReciever(final Network n) {
 			this.n = n;
 		}
 
+		private void stop() {
+			this.stopped = true;
+		}
+
 		@Override
 		public void run() {
-			while (!Thread.interrupted()) {
-				while (!SSS7.getInstance().hasReceived() && !Thread.interrupted()) {
+			while (!this.stopped) {
+				while (!SSS7.getInstance().hasReceived() && !this.stopped) {
 					try {
 						synchronized (this) {
 							this.wait(100);
@@ -91,12 +96,17 @@ public class SssConnection {
 
 	private class SssSender implements Runnable {
 		private boolean isNotified;
+		private boolean stopped = false;
 
 		private final Queue<byte[]> queue;
 
 		private SssSender() {
 			this.isNotified = false;
 			this.queue = new LinkedList<>();
+		}
+
+		private void stop() {
+			this.stopped = true;
 		}
 
 		synchronized public void add(final byte[] message) {
@@ -115,8 +125,8 @@ public class SssConnection {
 
 		@Override
 		public void run() {
-			while (!Thread.interrupted()) {
-				while (!this.isEmpty() && !Thread.interrupted()) {
+			while (!this.stopped) {
+				while (!this.isEmpty() && !this.stopped) {
 					final byte[] message = this.get();
 					while (!SSS7.getInstance().canSend()) {
 						try {
@@ -148,7 +158,7 @@ public class SssConnection {
 	}
 
 	public void interrupt() {
-		this.recieverThread.interrupt();
-		this.senderThread.interrupt();
+		this.sender.stop();
+		this.busReciever.stop();
 	}
 }
