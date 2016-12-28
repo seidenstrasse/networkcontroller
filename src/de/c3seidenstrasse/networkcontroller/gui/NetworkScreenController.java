@@ -43,7 +43,7 @@ public class NetworkScreenController {
 	ListView<Transport> transportLog;
 
 	public Network init() {
-		this.n = Network.create(false);
+		this.n = Network.create();
 
 		// Message Queue
 		this.messageLog.setItems(this.n.getBusProtocolHistory());

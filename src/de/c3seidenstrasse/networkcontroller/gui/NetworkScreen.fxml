@@ -56,7 +56,7 @@
          </BorderPane.margin></HBox>
    </bottom>
    <center>
-      <ImageView fitHeight="800.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+      <ImageView fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
          <image>
             <Image url="@../utils/networkmap.png" />
          </image>
