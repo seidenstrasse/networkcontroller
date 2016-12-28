@@ -80,10 +80,10 @@ public class SssConnection {
 							this.wait(100);
 						}
 					} catch (final InterruptedException e) {
-						e.printStackTrace();
 					}
 				}
-				new Thread(new SssMessageProcessor(SSS7.getInstance().getReceived(), this.n)).start();
+				if (SSS7.getInstance().hasReceived())
+					new Thread(new SssMessageProcessor(SSS7.getInstance().getReceived(), this.n)).start();
 			}
 			SSS7.getInstance().stop();
 		}
