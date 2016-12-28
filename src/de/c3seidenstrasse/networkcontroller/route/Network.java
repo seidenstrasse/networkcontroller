@@ -194,6 +194,8 @@ public class Network implements Runnable {
 
 	synchronized public void stop() {
 		this.t.interrupt();
+		if (this.sssc != null)
+			this.sssc.interrupt();
 	}
 
 	/**

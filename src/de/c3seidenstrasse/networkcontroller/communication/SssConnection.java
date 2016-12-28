@@ -13,7 +13,9 @@ import de.c3seidenstrasse.networkcontroller.route.Network;
 public class SssConnection {
 	private final Network n;
 	private final SssSender sender;
+	private final Thread senderThread;
 	private final SssBusReciever busReciever;
+	private final Thread recieverThread;
 	// private final SssNetworkReciever networkReciever;
 
 	public SssConnection(final Network n, final String connection) {
@@ -21,11 +23,13 @@ public class SssConnection {
 		SSS7.getInstance().start(connection);
 
 		this.busReciever = new SssBusReciever(this.n);
-		new Thread(this.busReciever, "SssBusReciever").start();
+		this.senderThread = new Thread(this.busReciever, "SssBusReciever");
+		this.senderThread.start();
 		// this.networkReciever = new SssNetworkReciever(this.n);
 		// new Thread(this.networkReciever, "SssNetworkReciever").start();
 		this.sender = new SssSender();
-		new Thread(this.sender, "SssSender").start();
+		this.recieverThread = new Thread(this.sender, "SssSender");
+		this.recieverThread.start();
 	}
 
 	private class SssNetworkReciever implements Runnable {
@@ -53,6 +57,10 @@ public class SssConnection {
 					throw new Error(e);
 				}
 			}
+			try {
+				this.socket.close();
+			} catch (final IOException e) {
+			}
 		}
 	}
 
@@ -77,6 +85,7 @@ public class SssConnection {
 				}
 				new Thread(new SssMessageProcessor(SSS7.getInstance().getReceived(), this.n)).start();
 			}
+			SSS7.getInstance().stop();
 		}
 	}
 
@@ -136,5 +145,10 @@ public class SssConnection {
 
 	public void send(final byte[] message) {
 		this.sender.add(message);
+	}
+
+	public void interrupt() {
+		this.recieverThread.interrupt();
+		this.senderThread.interrupt();
 	}
 }
