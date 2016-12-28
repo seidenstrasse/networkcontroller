@@ -127,6 +127,6 @@ public class NetworkScreenController {
 
 	@FXML
 	public void homeAction() {
-		this.childCombobox.getValue().getNc().home();
+		this.selected.home();
 	}
 }
