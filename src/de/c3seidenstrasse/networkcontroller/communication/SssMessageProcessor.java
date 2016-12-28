@@ -5,6 +5,7 @@ import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
+import javafx.application.Platform;
 
 public class SssMessageProcessor implements Runnable {
 	final byte[] message;
@@ -21,7 +22,9 @@ public class SssMessageProcessor implements Runnable {
 		System.out.println("SRC: " + this.message[1]);
 		System.out.println("DST: " + this.message[2]);
 		System.out.println("PL1: " + this.message[3]);
-		this.n.saveBusToList(this.message, true);
+		Platform.runLater(() -> {
+			this.n.saveBusToList(this.message, true);
+		});
 		if (this.message[1] == AirSupplier.CHANGER_ID) {
 			// delegate message to AirSupplier
 			this.n.getAirsupplier().messageRecieved(this.message[0], this.message[1], this.message[3]);
