@@ -203,6 +203,7 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 		if (this instanceof Router) {
 			final Router thisRouter = (Router) this;
 			thisRouter.turnTo(99);
+			thisRouter.setCurrentExit(0);
 		}
 	}
 }
