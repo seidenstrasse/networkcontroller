@@ -21,20 +21,14 @@ public class PushState extends CapsuleTransportState {
 	public void doYourThing() {
 		this.t.getNetwork().getAirsupplier().push();
 
-		final Iterator<IndexedNetworkComponent> i = this.t.getDown().iterator();
-		int seconds = 0;
-		while (i.hasNext()) {
-			final IndexedNetworkComponent current = i.next();
-			seconds = seconds + current.getTransferDuration();
-
+		this.getCurrentTransport().getEnde().capsulePassed();
 			final TimerTask tt = new TimerTask() {
 				@Override
 				public void run() {
-					current.getNc().capsulePassed();
-				}
+					PushState.this.getCurrentTransport().getEnde().capsulePassed();
+				};
 			};
-			PushState.this.timer.schedule(tt, seconds * 1000);
+			PushState.this.timer.schedule(tt, 2000);
 		}
 	}
 
-}

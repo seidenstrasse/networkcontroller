@@ -24,6 +24,7 @@ public class NetworkScreen extends Application {
 			final Scene scene = new Scene(page);
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Network Display");
+			primaryStage.setFullScreen(true);
 			// primaryStage.setResizable(false);
 			final NetworkScreenController c = loader.getController();
 			final Network n = c.init();
