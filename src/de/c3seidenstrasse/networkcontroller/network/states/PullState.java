@@ -17,7 +17,7 @@ public class PullState extends CapsuleTransportState {
 
 	@Override
 	public void doYourThing() {
-		this.t.getNetwork().getAirsupplier().push();
+		this.t.getNetwork().getAirsupplier().pull();
 
 		final TimerTask tt = new TimerTask() {
 			@Override
