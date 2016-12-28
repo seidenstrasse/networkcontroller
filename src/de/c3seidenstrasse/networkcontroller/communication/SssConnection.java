@@ -107,6 +107,7 @@ public class SssConnection {
 
 		private void stop() {
 			this.stopped = true;
+			this.notify();
 		}
 
 		synchronized public void add(final byte[] message) {
