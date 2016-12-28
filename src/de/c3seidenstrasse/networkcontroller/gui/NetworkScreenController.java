@@ -20,6 +20,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.VBox;
 
 public class NetworkScreenController {
 	private Network n;
@@ -36,12 +37,20 @@ public class NetworkScreenController {
 	Button addTransportButton;
 	@FXML
 	ListView<Network.Message> messageLog;
+	@FXML
+	VBox rightVbox;
+	@FXML
+	ListView<Transport> transportLog;
 
 	public Network init() {
 		this.n = Network.create();
 
 		// Message Queue
 		this.messageLog.setItems(this.n.getBusProtocolHistory());
+		this.messageLog.prefHeightProperty().bind(this.rightVbox.heightProperty().divide(2));
+
+		// Transport Queue
+		this.transportLog.prefHeightProperty().bind(this.rightVbox.heightProperty().divide(2));
 
 		// Netzwerkliste
 		this.selected = this.n.getRoot();
