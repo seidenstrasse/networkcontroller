@@ -18,7 +18,12 @@
                <children>
                   <Label text="Turn Router" />
                   <ComboBox fx:id="childCombobox" prefWidth="150.0" />
-                  <Button mnemonicParsing="false" onAction="#turnToAction" text="Send" />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#turnToAction" text="Send" />
+                        <Button mnemonicParsing="false" onAction="#homeAction" text="Home" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
             <VBox alignment="TOP_CENTER" prefHeight="300.0" prefWidth="400.0" spacing="5.0">

@@ -198,4 +198,11 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	public Integer getId() {
 		return this.id;
 	}
+
+	public void home() {
+		if (this instanceof Router) {
+			final Router thisRouter = (Router) this;
+			thisRouter.turnTo(99);
+		}
+	}
 }

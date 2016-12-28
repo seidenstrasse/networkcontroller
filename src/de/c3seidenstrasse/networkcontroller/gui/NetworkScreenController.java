@@ -124,4 +124,9 @@ public class NetworkScreenController {
 	public void stopAction() {
 		this.n.getAirsupplier().stop();
 	}
+
+	@FXML
+	public void homeAction() {
+		this.childCombobox.getValue().getNc().home();
+	}
 }
