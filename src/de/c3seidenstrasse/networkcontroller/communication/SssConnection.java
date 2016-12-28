@@ -105,7 +105,7 @@ public class SssConnection {
 			this.queue = new LinkedList<>();
 		}
 
-		private void stop() {
+		synchronized private void stop() {
 			this.stopped = true;
 			this.notify();
 		}
