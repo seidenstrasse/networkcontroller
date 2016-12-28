@@ -4,8 +4,6 @@ import de.c3seidenstrasse.networkcontroller.route.Network;
 
 public class AirSupplier {
 	public final static byte CHANGER_ID = (byte) 0xFF;
-	private final static long AIRFLOW_START_MS = 1000;
-	private final static long AIRFLOW_STOP_MS = 2000;
 	private final Network n;
 	private ChangerState changerState;
 
