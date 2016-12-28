@@ -74,7 +74,7 @@ public class SssConnection {
 		@Override
 		public void run() {
 			while (!Thread.interrupted()) {
-				while (!SSS7.getInstance().hasReceived()) {
+				while (!SSS7.getInstance().hasReceived() && !Thread.interrupted()) {
 					try {
 						synchronized (this) {
 							this.wait(100);
@@ -116,7 +116,7 @@ public class SssConnection {
 		@Override
 		public void run() {
 			while (!Thread.interrupted()) {
-				while (!this.isEmpty()) {
+				while (!this.isEmpty() && !Thread.interrupted()) {
 					final byte[] message = this.get();
 					while (!SSS7.getInstance().canSend()) {
 						try {
