@@ -43,7 +43,7 @@ public class NetworkScreenController {
 	ListView<Transport> transportLog;
 
 	public Network init() {
-		this.n = Network.create();
+		this.n = Network.create(false);
 
 		// Message Queue
 		this.messageLog.setItems(this.n.getBusProtocolHistory());
@@ -137,5 +137,10 @@ public class NetworkScreenController {
 	@FXML
 	public void homeAction() {
 		this.selected.home();
+	}
+
+	@FXML
+	public void passedAction() {
+		this.n.getState().arrived();
 	}
 }

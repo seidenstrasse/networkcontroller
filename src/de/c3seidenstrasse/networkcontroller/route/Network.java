@@ -19,6 +19,7 @@ import de.c3seidenstrasse.networkcontroller.network.states.PushState;
 import de.c3seidenstrasse.networkcontroller.network.states.RouterTurningState;
 import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
 import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -211,7 +212,9 @@ public class Network implements Runnable {
 	public void saveBusToList(final byte[] message, final boolean incoming) {
 		if (message.length != 16)
 			return;
-		this.getBusProtocolHistory().add(new Message(message, incoming));
+		Platform.runLater(() -> {
+			this.getBusProtocolHistory().add(new Message(message, incoming));
+		});
 	}
 
 	public AirSupplier getAirsupplier() {

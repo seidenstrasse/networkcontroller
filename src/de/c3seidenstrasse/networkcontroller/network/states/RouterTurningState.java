@@ -29,9 +29,9 @@ public abstract class RouterTurningState extends NetworkState implements Observe
 		final Iterator<IndexedNetworkComponent> i = new LinkedList<>(this.waiting).iterator();
 		while (i.hasNext()) {
 			final IndexedNetworkComponent current = i.next();
-				current.getNc().register(this, ObserverEvent.POSITIONCHANGED);
-				current.getNc().turnTo(current.getI()); // Es muss gedreht
-														// werden
+			current.getNc().register(this, ObserverEvent.POSITIONCHANGED);
+			current.getNc().turnTo(current.getI()); // Es muss gedreht
+													// werden
 		}
 		if (this.waiting.isEmpty())
 			this.t.getNetwork().awake();
@@ -63,4 +63,8 @@ public abstract class RouterTurningState extends NetworkState implements Observe
 		this.enforceRouterPositions();
 	}
 
+	@Override
+	public void arrived() {
+		// do nothing
+	}
 }

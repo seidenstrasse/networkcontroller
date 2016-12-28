@@ -1,15 +1,13 @@
 package de.c3seidenstrasse.networkcontroller.network.states;
 
-import java.util.Iterator;
 import java.util.TimerTask;
 
-import de.c3seidenstrasse.networkcontroller.network.IndexedNetworkComponent;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 
 public class PushState extends CapsuleTransportState {
 
 	public PushState(final Transport t) {
-		super(t, t.getEnde());
+		super(t);
 	}
 
 	@Override
@@ -21,14 +19,12 @@ public class PushState extends CapsuleTransportState {
 	public void doYourThing() {
 		this.t.getNetwork().getAirsupplier().push();
 
-		this.getCurrentTransport().getEnde().capsulePassed();
-			final TimerTask tt = new TimerTask() {
-				@Override
-				public void run() {
-					PushState.this.getCurrentTransport().getEnde().capsulePassed();
-				};
+		final TimerTask tt = new TimerTask() {
+			@Override
+			public void run() {
+				PushState.this.arrived();
 			};
-			PushState.this.timer.schedule(tt, 2000);
-		}
+		};
+		PushState.this.timer.schedule(tt, 120000);
 	}
-
+}

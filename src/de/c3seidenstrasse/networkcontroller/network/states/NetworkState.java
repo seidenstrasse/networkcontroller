@@ -32,6 +32,8 @@ public abstract class NetworkState {
 		}
 	}
 
+	public abstract void arrived();
+
 	public abstract Transport getCurrentTransport() throws NoCurrentTransportException;
 
 	/**

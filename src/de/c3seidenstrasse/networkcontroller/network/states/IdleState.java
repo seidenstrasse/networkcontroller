@@ -31,4 +31,9 @@ public class IdleState extends NetworkState {
 		// just chill. nothing to do here!
 	}
 
+	@Override
+	public void arrived() {
+		// do nothing
+	}
+
 }
