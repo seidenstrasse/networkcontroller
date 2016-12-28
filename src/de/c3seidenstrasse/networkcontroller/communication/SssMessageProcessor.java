@@ -52,6 +52,9 @@ public class SssMessageProcessor implements Runnable {
 			try {
 				final Transport t = new Transport(src, dst);
 				this.n.addTransport(t);
+				final byte[] message = { 0x05, 0x00, this.message[1], this.message[3], 0x00, 0x00, 0x00, 0x00, 0x00,
+						0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+				this.n.send(message);
 			} catch (final RouteNotFoundException e) {
 				// forget it
 				e.printStackTrace();
