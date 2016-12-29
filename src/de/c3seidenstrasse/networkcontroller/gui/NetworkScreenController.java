@@ -11,6 +11,7 @@ import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
@@ -48,6 +49,9 @@ public class NetworkScreenController {
 		// Message Queue
 		this.messageLog.setItems(this.n.getBusProtocolHistory());
 		this.messageLog.prefHeightProperty().bind(this.rightVbox.heightProperty().divide(2));
+		this.n.getBusProtocolHistory().addListener((ListChangeListener<Network.Message>) c -> {
+			this.messageLog.scrollTo(this.n.getBusProtocolHistory().size());
+		});
 
 		// Transport Queue
 		this.transportLog.prefHeightProperty().bind(this.rightVbox.heightProperty().divide(2));
