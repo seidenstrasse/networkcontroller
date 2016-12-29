@@ -27,7 +27,7 @@ public class Network implements Runnable {
 
 	private final Thread t;
 
-	private final SssConnection sssc;
+	private SssConnection sssc = null;
 
 	private final Map<Integer, NetworkComponent> idMap;
 
@@ -47,10 +47,10 @@ public class Network implements Runnable {
 		}
 		this.getRoot().create33c3();
 
-		if (withNetwork) {
+		try {
 			this.sssc = new SssConnection(this, "/dev/ttyUSB0");
-		} else {
-			this.sssc = null;
+		} catch (final UnsatisfiedLinkError e) {
+			System.err.println("Could not connect bus!");
 		}
 
 		this.t = new Thread(this, "NetworkWorker");
