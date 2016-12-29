@@ -35,6 +35,11 @@ public class Interconnect implements Observer {
 		this.myList = myList;
 	}
 
+	@Override
+	public String toString() {
+		return "Interconnect [from=" + this.from + ", to=" + this.to + "]";
+	}
+
 	synchronized public void setUpRoute() {
 		this.from.getNetwork().getAirsupplier().stop();
 		try {

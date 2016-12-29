@@ -6,10 +6,12 @@ import java.util.Map.Entry;
 import de.c3seidenstrasse.networkcontroller.network.Exit;
 import de.c3seidenstrasse.networkcontroller.network.IndexedNetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
+import de.c3seidenstrasse.networkcontroller.network.Router;
 import de.c3seidenstrasse.networkcontroller.route.Interconnect;
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -31,9 +33,9 @@ public class NetworkScreenController {
 	@FXML
 	ComboBox<IndexedNetworkComponent> childCombobox;
 	@FXML
-	ComboBox<Exit> fromDropdown;
+	ComboBox<NetworkComponent> fromDropdown;
 	@FXML
-	ComboBox<Exit> toDropdown;
+	ComboBox<NetworkComponent> toDropdown;
 	@FXML
 	Button addTransportButton;
 	@FXML
@@ -53,7 +55,7 @@ public class NetworkScreenController {
 			this.messageLog.scrollTo(this.n.getBusProtocolHistory().size());
 		});
 
-		// Transport Queue
+		// Connect Queue
 		this.connectLog.prefHeightProperty().bind(this.rightVbox.heightProperty().divide(2));
 
 		// Netzwerkliste
@@ -65,13 +67,22 @@ public class NetworkScreenController {
 		});
 
 		// fill dropdowns
-		final ObservableList<Exit> exits = FXCollections.observableArrayList();
+		final ObservableList<NetworkComponent> exits = FXCollections.observableArrayList();
 		final Iterator<Entry<Integer, NetworkComponent>> i = this.n.getIdMap().entrySet().iterator();
 		while (i.hasNext()) {
 			final NetworkComponent current = i.next().getValue();
-			if (current instanceof Exit)
-				exits.add((Exit) current);
+			if (current instanceof Exit || current instanceof Router)
+				exits.add(current);
 		}
+		exits.sort((arg0, arg1) -> {
+			if (arg0 instanceof Router && arg1 instanceof Exit) {
+				return -1;
+			} else if (arg1 instanceof Router && arg0 instanceof Exit) {
+				return 1;
+			}
+			return arg0.getName().compareTo(arg1.getName());
+		});
+
 		this.fromDropdown.setItems(exits);
 		this.toDropdown.setItems(exits);
 
@@ -99,20 +110,22 @@ public class NetworkScreenController {
 
 	@FXML
 	public void addRouteAction() {
-		final Exit start = this.fromDropdown.getValue();
-		final Exit ende = this.toDropdown.getValue();
-		try {
-			final Interconnect ic = new Interconnect(start, ende, this.connectLog.getItems());
-			ic.setUpRoute();
-			this.connectLog.getItems().add(ic);
-		} catch (RouteNotFoundException | NoCurrentTransportException e) {
-			final Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setHeaderText("Error in executing Interconnect");
-			alert.setContentText(e.getMessage());
+		final NetworkComponent start = this.fromDropdown.getValue();
+		final NetworkComponent ende = this.toDropdown.getValue();
+		Platform.runLater(() -> {
+			try {
+				final Interconnect ic = new Interconnect(start, ende, this.connectLog.getItems());
+				ic.setUpRoute();
+				this.connectLog.getItems().add(ic);
+			} catch (RouteNotFoundException | NoCurrentTransportException e) {
+				final Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setHeaderText("Error in executing Interconnect");
+				alert.setContentText(e.getMessage());
 
-			alert.show();
-		}
+				alert.show();
+			}
+		});
 	}
 
 	@FXML
