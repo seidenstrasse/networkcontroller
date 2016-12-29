@@ -6,19 +6,19 @@ import java.util.Map.Entry;
 import de.c3seidenstrasse.networkcontroller.network.Exit;
 import de.c3seidenstrasse.networkcontroller.network.IndexedNetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
+import de.c3seidenstrasse.networkcontroller.route.Interconnect;
 import de.c3seidenstrasse.networkcontroller.route.Network;
-import de.c3seidenstrasse.networkcontroller.route.Transport;
+import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
@@ -41,7 +41,7 @@ public class NetworkScreenController {
 	@FXML
 	VBox rightVbox;
 	@FXML
-	ListView<Transport> transportLog;
+	ListView<Interconnect> connectLog;
 
 	public Network init() {
 		this.n = Network.create();
@@ -54,7 +54,7 @@ public class NetworkScreenController {
 		});
 
 		// Transport Queue
-		this.transportLog.prefHeightProperty().bind(this.rightVbox.heightProperty().divide(2));
+		this.connectLog.prefHeightProperty().bind(this.rightVbox.heightProperty().divide(2));
 
 		// Netzwerkliste
 		this.selected = this.n.getRoot();
@@ -101,24 +101,16 @@ public class NetworkScreenController {
 	public void addRouteAction() {
 		final Exit start = this.fromDropdown.getValue();
 		final Exit ende = this.toDropdown.getValue();
-		if (start == null || ende == null)
-			return;
 		try {
-			final Transport t = new Transport(this.fromDropdown.getValue(), this.toDropdown.getValue());
-			this.n.addTransport(t);
-			this.addTransportButton.setStyle("-fx-base: #b6e7c9;");
-			Platform.runLater(() -> {
-				try {
-					Thread.sleep(1000);
-				} catch (final InterruptedException e) {
-				}
-				NetworkScreenController.this.addTransportButton.setStyle("");
-			});
-		} catch (final RouteNotFoundException e) {
+			final Interconnect ic = new Interconnect(start, ende, this.connectLog.getItems());
+			ic.setUpRoute();
+			this.connectLog.getItems().add(ic);
+		} catch (RouteNotFoundException | NoCurrentTransportException e) {
 			final Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Route not found");
-			alert.setHeaderText("works not for you");
-			alert.setContentText("I was not able to find a route between your selected targets!");
+			alert.setTitle("Error");
+			alert.setHeaderText("Error in executing Interconnect");
+			alert.setContentText(e.getMessage());
+
 			alert.show();
 		}
 	}

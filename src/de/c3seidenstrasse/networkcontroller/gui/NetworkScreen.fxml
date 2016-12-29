@@ -28,17 +28,16 @@
             </VBox>
             <VBox alignment="TOP_CENTER" prefHeight="300.0" prefWidth="400.0" spacing="5.0">
                <children>
-                  <Label text="Transport" />
+                  <Label text="Interconnect" />
                   <HBox spacing="5.0">
                      <children>
-                        <ComboBox fx:id="fromDropdown" prefWidth="200.0" />
-                        <ComboBox fx:id="toDropdown" prefWidth="200.0" />
+                        <ComboBox fx:id="fromDropdown" prefWidth="200.0" promptText="from" />
+                        <ComboBox fx:id="toDropdown" prefWidth="200.0" promptText="to" />
                      </children>
                   </HBox>
                   <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                      <children>
                         <Button fx:id="addTransportButton" mnemonicParsing="false" onAction="#addRouteAction" text="Add" />
-                        <Button mnemonicParsing="false" onAction="#passedAction" text="Passed!" />
                      </children>
                   </HBox>
                </children>
@@ -69,7 +68,7 @@
       <VBox fx:id="rightVbox" prefHeight="200.0" BorderPane.alignment="CENTER">
          <children>
             <ListView fx:id="messageLog" prefHeight="500.0" />
-            <ListView fx:id="transportLog" prefHeight="200.0" prefWidth="200.0" />
+            <ListView fx:id="connectLog" prefHeight="200.0" prefWidth="200.0" />
          </children>
       </VBox>
    </right>
