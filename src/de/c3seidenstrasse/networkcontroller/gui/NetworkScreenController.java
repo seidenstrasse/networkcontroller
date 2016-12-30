@@ -4,11 +4,13 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import de.c3seidenstrasse.networkcontroller.network.Exit;
-import de.c3seidenstrasse.networkcontroller.network.IndexedNetworkComponent;
+import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.Router;
 import de.c3seidenstrasse.networkcontroller.route.Interconnect;
+import de.c3seidenstrasse.networkcontroller.route.Message;
 import de.c3seidenstrasse.networkcontroller.route.Network;
+import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
 import javafx.application.Platform;
@@ -31,7 +33,7 @@ public class NetworkScreenController {
 	public TreeView<NetworkComponent> ncTree;
 	public NetworkComponent selected;
 	@FXML
-	ComboBox<IndexedNetworkComponent> childCombobox;
+	ComboBox<NetworkComponent> childCombobox;
 	@FXML
 	ComboBox<NetworkComponent> fromDropdown;
 	@FXML
@@ -39,7 +41,7 @@ public class NetworkScreenController {
 	@FXML
 	Button addTransportButton;
 	@FXML
-	ListView<Network.Message> messageLog;
+	ListView<Message> messageLog;
 	@FXML
 	VBox rightVbox;
 	@FXML
@@ -51,7 +53,7 @@ public class NetworkScreenController {
 		// Message Queue
 		this.messageLog.setItems(this.n.getBusProtocolHistory());
 		this.messageLog.prefHeightProperty().bind(this.rightVbox.heightProperty().divide(2));
-		this.n.getBusProtocolHistory().addListener((ListChangeListener<Network.Message>) c -> {
+		this.n.getBusProtocolHistory().addListener((ListChangeListener<Message>) c -> {
 			this.messageLog.scrollTo(this.n.getBusProtocolHistory().size());
 		});
 
@@ -104,8 +106,13 @@ public class NetworkScreenController {
 	}
 
 	public void turnToAction() {
-		final IndexedNetworkComponent inc = this.childCombobox.getValue();
+		final NetworkComponent inc = this.childCombobox.getValue();
 		this.selected.turnTo(inc.getI());
+	}
+	
+	public void connectedAction() {
+		final NetworkComponent inc = this.childCombobox.getValue();
+		selected.setCurrentExit(inc.getI());
 	}
 
 	@FXML
@@ -113,9 +120,19 @@ public class NetworkScreenController {
 		final NetworkComponent start = this.fromDropdown.getValue();
 		final NetworkComponent ende = this.toDropdown.getValue();
 		Platform.runLater(() -> {
+			Transport t;
 			try {
-				final Interconnect ic = new Interconnect(start, ende, this.connectLog.getItems());
-				ic.setUpRoute();
+				t = new Transport(start, ende);
+				this.n.addTransport(t);
+				System.out.println("Added transport: " + t);
+			} catch (RouteNotFoundException e) {
+				e.printStackTrace();
+			}
+			
+			/*
+			try {
+				//final Interconnect ic = new Interconnect(start, ende, this.connectLog.getItems());
+				//ic.setUpRoute();
 				this.connectLog.getItems().add(ic);
 			} catch (RouteNotFoundException | NoCurrentTransportException e) {
 				final Alert alert = new Alert(AlertType.ERROR);
@@ -125,6 +142,7 @@ public class NetworkScreenController {
 
 				alert.show();
 			}
+			*/
 		});
 	}
 

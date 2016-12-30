@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.c3seidenstrasse.networkcontroller.network.Exit;
-import de.c3seidenstrasse.networkcontroller.network.IndexedNetworkComponent;
+import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
 import de.c3seidenstrasse.networkcontroller.utils.Observer;
@@ -15,9 +15,9 @@ import javafx.collections.ObservableList;
 public class Interconnect implements Observer {
 	private final NetworkComponent from;
 	private final NetworkComponent to;
-	private final LinkedList<IndexedNetworkComponent> route;
+	private final LinkedList<NetworkComponent> route;
 
-	private final LinkedList<IndexedNetworkComponent> unknownStatus;
+	private final LinkedList<NetworkComponent> unknownStatus;
 
 	private final ObservableList<Interconnect> myList;
 
@@ -48,8 +48,8 @@ public class Interconnect implements Observer {
 		}
 
 		this.route.forEach((inc) -> {
-			inc.getNc().register(this, ObserverEvent.POSITIONCHANGED);
-			inc.getNc().turnTo(inc.getI());
+			inc.register(this, ObserverEvent.POSITIONCHANGED);
+			inc.turnTo(inc.getI());
 		});
 	}
 
@@ -59,15 +59,15 @@ public class Interconnect implements Observer {
 		}
 
 		this.route.forEach((inc) -> {
-			inc.getNc().deregister(this, ObserverEvent.POSITIONCHANGED);
+			inc.deregister(this, ObserverEvent.POSITIONCHANGED);
 		});
 	}
 
 	@Override
 	synchronized public void update(final NetworkComponent nc) {
-		final Iterator<IndexedNetworkComponent> i = this.unknownStatus.iterator();
+		final Iterator<NetworkComponent> i = this.unknownStatus.iterator();
 		while (i.hasNext()) {
-			final IndexedNetworkComponent current = i.next();
+			final NetworkComponent current = i.next();
 			if (current.equals(nc)) {
 				if (nc.getCurrentExit() == current.getI()) {
 					// hat alles geklappt

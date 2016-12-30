@@ -4,13 +4,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import de.c3seidenstrasse.networkcontroller.network.IndexedNetworkComponent;
+import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
 
 public abstract class NetworkState {
-	protected final Set<IndexedNetworkComponent> waiting;
+	protected final Set<NetworkComponent> waiting;
 
 	public abstract void accept(NetworkStateVisitor nsv);
 
@@ -23,7 +23,7 @@ public abstract class NetworkState {
 	}
 
 	public void hasFinished(final NetworkComponent nc) {
-		final Iterator<IndexedNetworkComponent> i = this.waiting.iterator();
+		final Iterator<NetworkComponent> i = this.waiting.iterator();
 		while (i.hasNext()) {
 			if (i.next().equals(nc)) {
 				i.remove();

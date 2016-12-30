@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
+import com.google.gson.annotations.Expose;
+
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
@@ -26,12 +28,30 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	private Integer currentExit;
 	private final Network network;
 	private final Integer id;
+	
+	private final Integer i;
+	private final Integer transferDuration;
 
-	NetworkComponent(final Integer id, final Network network) throws IdAlreadyExistsException {
+	NetworkComponent(final Integer id, final Network network, int i, int duration) throws IdAlreadyExistsException {
 		this.network = network;
 		this.id = id;
+		this.i = i;
+		this.transferDuration = duration;
 		network.addNodeToMap(id, this);
 		this.setCurrentExit(0);
+	}
+	
+	public Integer getI() {
+		return i;
+	}
+
+	public Integer getTransferDuration() {
+		return transferDuration;
+	}
+
+	@Override
+	public String toString() {
+		return i + " " + id + " " + getName();
 	}
 
 	/**
@@ -59,9 +79,6 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	 */
 	public abstract Integer getPositionOf(final NetworkComponent child) throws NotFoundException, NoAttachmentException;
 
-	public abstract IndexedNetworkComponent getIncOf(final NetworkComponent child)
-			throws NotFoundException, NoAttachmentException;
-
 	/**
 	 * returns the {@linkplain NetworkComponent} which is at the position
 	 * {@code position}
@@ -87,7 +104,7 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	 *
 	 * @return a set of all children
 	 */
-	public abstract Set<IndexedNetworkComponent> getIndexedChildren();
+	public abstract Set<NetworkComponent> getIndexedChildren();
 
 	/**
 	 * outputs the set of all children
@@ -96,9 +113,9 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	 */
 	public Set<NetworkComponent> getChildren() {
 		final HashSet<NetworkComponent> set = new HashSet<>();
-		final Iterator<IndexedNetworkComponent> i = this.getIndexedChildren().iterator();
+		final Iterator<NetworkComponent> i = this.getIndexedChildren().iterator();
 		while (i.hasNext())
-			set.add(i.next().getNc());
+			set.add(i.next());
 		return set;
 	}
 
@@ -126,14 +143,14 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 
 	public abstract void fillRoute(Transport t, NetworkComponent target);
 
-	public abstract LinkedList<IndexedNetworkComponent> RouteTo(NetworkComponent target) throws RouteNotFoundException;
+	public abstract LinkedList<NetworkComponent> RouteTo(NetworkComponent target) throws RouteNotFoundException;
 
 	public boolean hasChild(final NetworkComponent nc) {
 		if (this.equals(nc))
 			return true;
-		final Iterator<IndexedNetworkComponent> i = this.getIndexedChildren().iterator();
+		final Iterator<NetworkComponent> i = this.getIndexedChildren().iterator();
 		while (i.hasNext())
-			if (i.next().getNc().hasChild(nc))
+			if (i.next().hasChild(nc))
 				return true;
 		return false;
 	}
@@ -156,11 +173,11 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 		nc.add(second);
 
 		if (this.hasAllChilds(nc)) {
-			final Iterator<IndexedNetworkComponent> iterator = this.getIndexedChildren().iterator();
+			final Iterator<NetworkComponent> iterator = this.getIndexedChildren().iterator();
 			while (iterator.hasNext()) {
-				final IndexedNetworkComponent current = iterator.next();
-				if (current.getNc().hasAllChilds(nc)) {
-					return current.getNc().getIntersectionOf(first, second);
+				final NetworkComponent current = iterator.next();
+				if (current.hasAllChilds(nc)) {
+					return current.getIntersectionOf(first, second);
 				}
 			}
 			return this;

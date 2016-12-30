@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import de.c3seidenstrasse.networkcontroller.network.IndexedNetworkComponent;
+import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.utils.NotFoundException;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
@@ -16,16 +16,16 @@ public class Transport {
 	private final NetworkComponent start;
 	private final NetworkComponent ende;
 	private final NetworkComponent highestPoint;
-	private final LinkedList<IndexedNetworkComponent> up;
-	private final LinkedList<IndexedNetworkComponent> down;
-	private final HashSet<IndexedNetworkComponent> airflow;
+	private final LinkedList<NetworkComponent> up;
+	private final LinkedList<NetworkComponent> down;
+	private final LinkedList<NetworkComponent> airflow;
 
 	public Transport(final NetworkComponent start, final NetworkComponent ende) throws RouteNotFoundException {
 		this.transportid = Transport.LASTTRANSPORTID++;
 
 		this.up = new LinkedList<>();
 		this.down = new LinkedList<>();
-		this.airflow = new HashSet<>();
+		this.airflow = new LinkedList<>();
 
 		if (!start.getNetwork().equals(ende.getNetwork())) {
 			throw new IllegalArgumentException();
@@ -49,7 +49,7 @@ public class Transport {
 
 	@Override
 	public String toString() {
-		return "Transport #" + this.transportid;
+		return "Transport #" + this.transportid + visualRoute();
 	}
 
 	public String visualRoute() {
@@ -57,29 +57,29 @@ public class Transport {
 				+ ",\nup=" + this.up + ",\ndown=" + this.down + ",\nairflow=" + this.airflow + "]";
 	}
 
-	public void addUp(final IndexedNetworkComponent inc) {
+	public void addUp(final NetworkComponent inc) {
 		this.getUp().add(inc);
 	}
 
-	public void addDown(final IndexedNetworkComponent inc) {
+	public void addDown(final NetworkComponent inc) {
 		this.getDown().add(inc);
 	}
 
-	public LinkedList<IndexedNetworkComponent> getTransportWaypoints() {
-		final LinkedList<IndexedNetworkComponent> l = new LinkedList<>(this.getUp());
+	public LinkedList<NetworkComponent> getTransportWaypoints() {
+		final LinkedList<NetworkComponent> l = new LinkedList<>(this.getUp());
 		l.addAll(this.getDown());
 		return l;
 	}
 
 	public NetworkComponent getLastUp() {
-		return this.getUp().getLast().getNc();
+		return this.getUp().getLast();
 	}
 
-	public LinkedList<IndexedNetworkComponent> getUp() {
+	public LinkedList<NetworkComponent> getUp() {
 		return this.up;
 	}
 
-	public LinkedList<IndexedNetworkComponent> getDown() {
+	public LinkedList<NetworkComponent> getDown() {
 		return this.down;
 	}
 
@@ -95,7 +95,7 @@ public class Transport {
 		return this.highestPoint;
 	}
 
-	public HashSet<IndexedNetworkComponent> getAirflow() {
+	public LinkedList<NetworkComponent> getAirflow() {
 		return this.airflow;
 	}
 

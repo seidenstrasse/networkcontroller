@@ -21,9 +21,9 @@ public class Exit extends NetworkComponent {
 	@Expose
 	private final String name;
 
-	Exit(final Integer id, final String name, final Network network, final NetworkComponent parent)
+	Exit(final Integer id, final String name, final Network network, final NetworkComponent parent, int i, int duration)
 			throws IdAlreadyExistsException {
-		super(id, network);
+		super(id, network, i, duration);
 		this.parent = parent;
 		this.name = name;
 		this.setCurrentExit(1);
@@ -35,7 +35,7 @@ public class Exit extends NetworkComponent {
 	}
 
 	@Override
-	public Set<IndexedNetworkComponent> getIndexedChildren() {
+	public Set<NetworkComponent> getIndexedChildren() {
 		return new HashSet<>();
 	}
 
@@ -52,11 +52,6 @@ public class Exit extends NetworkComponent {
 	}
 
 	@Override
-	public String toString() {
-		return this.getName();
-	}
-
-	@Override
 	public Router createRouterAt(final Integer position, final Integer id, final String name,
 			final int transferDuration) throws NoAttachmentException {
 		throw new NoAttachmentException(Exit.AN_EXIT_HAS_NO_ATTACHMENT);
@@ -65,14 +60,10 @@ public class Exit extends NetworkComponent {
 	@Override
 	public void fillRoute(final Transport t, final NetworkComponent target) {
 		if (!this.hasChild(target)) {
-			try {
-				t.addUp(new IndexedNetworkComponent(this, 1, this.parent.getIncOf(this).getTransferDuration()));
-			} catch (NotFoundException | NoAttachmentException e) {
-				// should not happen
-			}
+			t.addUp(this);
 			this.parent.fillRoute(t, target);
 		} else {
-			t.addDown(new IndexedNetworkComponent(this, 1, 5));
+			t.addDown(this);
 		}
 	}
 
@@ -82,15 +73,10 @@ public class Exit extends NetworkComponent {
 	}
 
 	@Override
-	public IndexedNetworkComponent getIncOf(final NetworkComponent child) throws NoAttachmentException {
-		throw new NoAttachmentException(Exit.AN_EXIT_HAS_NO_ATTACHMENT);
-	}
-
-	@Override
-	public LinkedList<IndexedNetworkComponent> RouteTo(final NetworkComponent target) throws RouteNotFoundException {
+	public LinkedList<NetworkComponent> RouteTo(final NetworkComponent target) throws RouteNotFoundException {
 		if (this.equals(target)) {
-			final LinkedList<IndexedNetworkComponent> route = new LinkedList<>();
-			// route.addFirst(new IndexedNetworkComponent(this, 1));
+			final LinkedList<NetworkComponent> route = new LinkedList<>();
+			// route.addFirst(new NetworkComponent(this, 1));
 			return route;
 		}
 		throw new RouteNotFoundException();
