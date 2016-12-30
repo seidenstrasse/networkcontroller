@@ -1,8 +1,8 @@
 package de.c3seidenstrasse.networkcontroller.network;
 
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.google.gson.annotations.Expose;
 
@@ -12,6 +12,7 @@ import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
 import de.c3seidenstrasse.networkcontroller.utils.NotFoundException;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
+import de.c3seidenstrasse.networkcontroller.utils.SpaceOccupiedException;
 import de.c3seidenstrasse.networkcontroller.utils.TreeIntegrityException;
 import javafx.scene.control.TreeItem;
 
@@ -26,8 +27,8 @@ public class CodeReader extends NetworkComponent {
 
 	private NetworkComponent child;
 
-	public CodeReader(final Integer id, final Network network) throws IdAlreadyExistsException {
-		super(id, network);
+	public CodeReader(final Integer id, final Network network, int duration) throws IdAlreadyExistsException, NoAttachmentException, TreeIntegrityException, SpaceOccupiedException {
+		super(id, network, null, 0, duration);
 		this.setCurrentExit(1);
 	}
 
@@ -37,14 +38,14 @@ public class CodeReader extends NetworkComponent {
 	}
 
 	@Override
-	public Set<IndexedNetworkComponent> getIndexedChildren() {
-		final Set<IndexedNetworkComponent> set = new HashSet<>();
-		set.add(new IndexedNetworkComponent(this.getChild(), 1, 5));
+	public Map<Integer,NetworkComponent> getIndexedChildren() {
+		final Map<Integer,NetworkComponent> set = new TreeMap<>();
+		set.put(0,child);
 		return set;
 	}
 
 	@Override
-	protected void addChildAt(final Integer position, final NetworkComponent nc, final int transferDuration)
+	protected void addChildAt(final Integer position, final NetworkComponent nc)
 			throws TreeIntegrityException, NoAttachmentException {
 		if (!position.equals(1))
 			throw new NoAttachmentException("There is no attachment at position " + position.toString());
@@ -53,10 +54,10 @@ public class CodeReader extends NetworkComponent {
 
 	@Override
 	public Exit createExitAt(final Integer position, final Integer id, final String name, final int transferDuration)
-			throws NoAttachmentException, IdAlreadyExistsException {
-		final Exit e = new Exit(id, name, this.getNetwork(), this);
+			throws NoAttachmentException, IdAlreadyExistsException, TreeIntegrityException, SpaceOccupiedException {
+		final Exit e = new Exit(id, name, this.getNetwork(), this, position, transferDuration);
 		try {
-			this.addChildAt(position, e, transferDuration);
+			this.addChildAt(position, e);
 		} catch (final TreeIntegrityException e1) {
 			throw new Error(); // should not happen
 		}
@@ -65,10 +66,10 @@ public class CodeReader extends NetworkComponent {
 
 	@Override
 	public Router createRouterAt(final Integer position, final Integer id, final String name,
-			final int transferDuration) throws NoAttachmentException, IdAlreadyExistsException {
-		final Router r = new Router(id, name, this.getNetwork(), this);
+			final int transferDuration) throws NoAttachmentException, IdAlreadyExistsException, TreeIntegrityException, SpaceOccupiedException {
+		final Router r = new Router(id, name, this.getNetwork(), this, position, transferDuration);
 		try {
-			this.addChildAt(position, r, transferDuration);
+			this.addChildAt(position, r);
 		} catch (final TreeIntegrityException e1) {
 			throw new Error(); // should not happen
 		}
@@ -78,29 +79,14 @@ public class CodeReader extends NetworkComponent {
 	@Override
 	public void fillRoute(final Transport t, final NetworkComponent target) {
 		if (this.hasChild(target)) {
-			t.addDown(new IndexedNetworkComponent(this, 1, 5));
+			t.addDown(this);
 			this.getChild().fillRoute(t, target);
 		} else
 			throw new Error();
 	}
 
 	@Override
-	public Integer getPositionOf(final NetworkComponent child) throws NotFoundException {
-		if (this.getChild().equals(child))
-			return 1;
-		throw new NotFoundException();
-	}
-
-	@Override
-	public IndexedNetworkComponent getIncOf(final NetworkComponent child)
-			throws NotFoundException, NoAttachmentException {
-		if (this.getChild().equals(child))
-			return new IndexedNetworkComponent(this.getChild(), 1, 5);
-		throw new NotFoundException();
-	}
-
-	@Override
-	public LinkedList<IndexedNetworkComponent> RouteTo(final NetworkComponent target) throws RouteNotFoundException {
+	public LinkedList<NetworkComponent> RouteTo(final NetworkComponent target) throws RouteNotFoundException {
 		return this.getChild().RouteTo(target);
 	}
 
@@ -120,7 +106,7 @@ public class CodeReader extends NetworkComponent {
 			caty.createExitAt(4, 8, "Lounge", 130);
 			caty.createExitAt(3, 9, "FoodHacker", 140);
 			caty.createExitAt(2, 10, "Monolith", 150);
-		} catch (final NoAttachmentException | IdAlreadyExistsException e) {
+		} catch (final NoAttachmentException | IdAlreadyExistsException | TreeIntegrityException | SpaceOccupiedException e) {
 			e.printStackTrace();
 		}
 	}

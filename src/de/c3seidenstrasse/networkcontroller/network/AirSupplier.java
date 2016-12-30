@@ -1,6 +1,8 @@
 package de.c3seidenstrasse.networkcontroller.network;
 
+import de.c3seidenstrasse.networkcontroller.route.Message;
 import de.c3seidenstrasse.networkcontroller.route.Network;
+import de.c3seidenstrasse.networkcontroller.route.Message.MessageType;
 
 public class AirSupplier {
 	public final static byte CHANGER_ID = (byte) 0xFF;
@@ -37,15 +39,11 @@ public class AirSupplier {
 	}
 
 	synchronized private void turnForPull() {
-		final byte[] message = { 0x08, 0x00, CHANGER_ID, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00 };
-		this.n.send(message);
+		this.n.send(new Message(MessageType.AIRFLOW, 0, CHANGER_ID, 1));
 	}
 
 	synchronized private void turnForPush() {
-		final byte[] message = { 0x08, 0x00, CHANGER_ID, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00 };
-		this.n.send(message);
+		this.n.send(new Message(MessageType.AIRFLOW, 0, CHANGER_ID, 2));
 	}
 
 	synchronized public void pull() {
@@ -59,9 +57,7 @@ public class AirSupplier {
 	}
 
 	synchronized public void stop() {
-		final byte[] message = { 0x08, 0x00, CHANGER_ID, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00 };
-		this.n.send(message);
+		this.n.send(new Message(MessageType.AIRFLOW, 0, CHANGER_ID, 0));
 		System.out.println("AIRSUPPLY: Stopped");
 	}
 

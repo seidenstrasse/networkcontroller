@@ -1,10 +1,7 @@
 package de.c3seidenstrasse.networkcontroller.network.states;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import de.c3seidenstrasse.networkcontroller.network.IndexedNetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
+import de.c3seidenstrasse.networkcontroller.network.Router;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.Observer;
 import de.c3seidenstrasse.networkcontroller.utils.ObserverEvent;
@@ -26,14 +23,12 @@ public abstract class RouterTurningState extends NetworkState implements Observe
 	};
 
 	public void enforceRouterPositions() {
-		final Iterator<IndexedNetworkComponent> i = new LinkedList<>(this.waiting).iterator();
-		while (i.hasNext()) {
-			final IndexedNetworkComponent current = i.next();
-			current.getNc().register(this, ObserverEvent.POSITIONCHANGED);
-			current.getNc().turnTo(current.getI()); // Es muss gedreht
-													// werden
+		for (Router r : this.directionForRouter.keySet()) {
+			Integer direction = this.directionForRouter.get(r);
+			r.register(this, ObserverEvent.POSITIONCHANGED);
+			r.turnTo(direction);
 		}
-		if (this.waiting.isEmpty())
+		if (this.directionForRouter.isEmpty())
 			this.t.getNetwork().awake();
 	}
 
@@ -43,17 +38,12 @@ public abstract class RouterTurningState extends NetworkState implements Observe
 	}
 
 	private synchronized void removeFromWaitingList(final NetworkComponent nc) {
-		final Iterator<IndexedNetworkComponent> i = this.waiting.iterator();
-		boolean isDeleted = false;
-		while (i.hasNext() && !isDeleted) {
-			final IndexedNetworkComponent current = i.next();
-			if (current.getNc().equals(nc) && current.getI().equals(nc.getCurrentExit())) {
-				current.getNc().deregister(this, ObserverEvent.POSITIONCHANGED);
-				i.remove();
-				isDeleted = true;
-			}
+		Integer direction = directionForRouter.get(nc);
+		if(direction != null) {
+			nc.deregister(this, ObserverEvent.POSITIONCHANGED);
+			directionForRouter.remove(nc);
 		}
-		if (this.waiting.isEmpty()) {
+		if (this.directionForRouter.isEmpty()) {
 			this.getCurrentTransport().getNetwork().awake();
 		}
 	}

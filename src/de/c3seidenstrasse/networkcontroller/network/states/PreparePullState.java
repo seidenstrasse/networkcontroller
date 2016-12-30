@@ -1,5 +1,7 @@
 package de.c3seidenstrasse.networkcontroller.network.states;
 
+import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
+import de.c3seidenstrasse.networkcontroller.network.Router;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 
 public final class PreparePullState extends RouterTurningState {
@@ -12,8 +14,15 @@ public final class PreparePullState extends RouterTurningState {
 	public PreparePullState(final Transport t) {
 		super(t);
 		synchronized (this) {
-			this.waiting.addAll(this.getCurrentTransport().getAirflow());
-			this.waiting.addAll(this.getCurrentTransport().getUp());
+			NetworkComponent prev = t.getStart();
+			for(NetworkComponent nc : this.getCurrentTransport().getUp()) {
+				this.directionForRouter.put((Router)nc, prev.getIndexInParent());
+				prev = nc;
+			}			
+			for(NetworkComponent nc : this.getCurrentTransport().getAirflow()) {
+				this.directionForRouter.put((Router)nc, prev.getIndexInParent());
+				prev = nc;
+			}
 		}
 	}
 }

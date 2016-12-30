@@ -18,7 +18,10 @@ import de.c3seidenstrasse.networkcontroller.network.states.PullState;
 import de.c3seidenstrasse.networkcontroller.network.states.PushState;
 import de.c3seidenstrasse.networkcontroller.network.states.RouterTurningState;
 import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
+import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
 import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
+import de.c3seidenstrasse.networkcontroller.utils.SpaceOccupiedException;
+import de.c3seidenstrasse.networkcontroller.utils.TreeIntegrityException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,7 +30,7 @@ public class Network implements Runnable {
 
 	private final Thread t;
 
-	private final SssConnection sssc;
+	private SssConnection sssc = null;
 
 	private final Map<Integer, NetworkComponent> idMap;
 
@@ -41,16 +44,16 @@ public class Network implements Runnable {
 		this.busProtocol = FXCollections.observableArrayList();
 		this.airsupplier = new AirSupplier(this);
 		try {
-			this.root = new CodeReader(0x7F, this);
-		} catch (final IdAlreadyExistsException e) {
-			throw new Error();
+			this.root = new CodeReader(0x7F, this, 5);
+		} catch (final IdAlreadyExistsException | NoAttachmentException | TreeIntegrityException | SpaceOccupiedException e) {
+			throw new Error(e);
 		}
 		this.getRoot().create33c3();
 
-		if (withNetwork) {
+		try {
 			this.sssc = new SssConnection(this, "/dev/ttyUSB0");
-		} else {
-			this.sssc = null;
+		} catch (final UnsatisfiedLinkError e) {
+			System.err.println("Could not connect bus! " + e.getMessage());
 		}
 
 		this.t = new Thread(this, "NetworkWorker");
@@ -204,18 +207,16 @@ public class Network implements Runnable {
 	 * @param message
 	 *            the message to send
 	 */
-	public void send(final byte[] message) {
+	public void send(Message message) {
 		if (this.sssc != null)
-			this.sssc.send(message);
-		this.saveBusToList(message, false);
+			this.sssc.send(message.getPayload());
+		this.saveBusToList(message);
 
 	}
 
-	public void saveBusToList(final byte[] message, final boolean incoming) {
-		if (message.length != 16)
-			return;
+	public void saveBusToList(Message message) {
 		Platform.runLater(() -> {
-			this.getBusProtocolHistory().add(new Message(message, incoming));
+			this.getBusProtocolHistory().add(message);
 		});
 	}
 
@@ -229,64 +230,5 @@ public class Network implements Runnable {
 
 	public ObservableList<Message> getBusProtocolHistory() {
 		return this.busProtocol;
-	}
-
-	public class Message {
-		private final byte[] message;
-		private final boolean incoming;
-
-		private Message(final byte[] message, final boolean incoming) {
-			this.message = message;
-			this.incoming = incoming;
-		}
-
-		@Override
-		public String toString() {
-			String s = "";
-			if (this.incoming) {
-				s = s + "INC: ";
-			} else {
-				s = s + "OUT: ";
-			}
-			switch (this.message[0]) {
-			case 0:
-				s = s + "Detect at " + this.message[1];
-				break;
-			case 1:
-				s = s + "Connect " + this.message[2] + " to " + this.message[3];
-				break;
-			case 2:
-				s = s + "Connected " + this.message[1] + " to " + this.message[3];
-				break;
-			case 3:
-				s = s + "Request Route " + this.message[1] + " to " + this.message[3];
-				break;
-			case 4:
-				break;
-			case 5:
-				s = s + "ACK Route " + this.message[1] + " to " + this.message[3];
-				break;
-			case 6:
-				s = s + "Route " + this.message[1] + " to " + this.message[3] + "started";
-				break;
-			case 7:
-				s = s + "Barcode " + this.message[3] + " read";
-				break;
-			case 8:
-				switch (this.message[3]) {
-				case 0:
-					s = s + "Airflow stopped";
-					break;
-				case 1:
-					s = s + "Airflow Pull started";
-					break;
-				case 2:
-					s = s + "Airflow Push started";
-					break;
-				}
-				break;
-			}
-			return s;
-		}
 	}
 }

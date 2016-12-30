@@ -3,15 +3,16 @@ package de.c3seidenstrasse.networkcontroller.network;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 import de.c3seidenstrasse.networkcontroller.route.Network;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
+import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
+import de.c3seidenstrasse.networkcontroller.utils.NetworkComponentObservee;
 import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
 import de.c3seidenstrasse.networkcontroller.utils.NotFoundException;
 import de.c3seidenstrasse.networkcontroller.utils.ObserverEvent;
-import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
-import de.c3seidenstrasse.networkcontroller.utils.NetworkComponentObservee;
 import de.c3seidenstrasse.networkcontroller.utils.RouteNotFoundException;
 import de.c3seidenstrasse.networkcontroller.utils.SpaceOccupiedException;
 import de.c3seidenstrasse.networkcontroller.utils.TreeIntegrityException;
@@ -22,16 +23,40 @@ import javafx.scene.control.TreeItem;
  *
  * @author clarity
  */
-public abstract class NetworkComponent extends NetworkComponentObservee {
+public abstract class NetworkComponent extends NetworkComponentObservee implements Comparable<NetworkComponent> {
 	private Integer currentExit;
 	private final Network network;
+	
 	private final Integer id;
+	private final Integer indexInParent;
+	private final Integer transferDuration;
+	
+	protected NetworkComponent parent;
 
-	NetworkComponent(final Integer id, final Network network) throws IdAlreadyExistsException {
+	NetworkComponent(final Integer id, final Network network, NetworkComponent parent, int indexInParent, int duration) throws IdAlreadyExistsException, NoAttachmentException, TreeIntegrityException, SpaceOccupiedException {
 		this.network = network;
 		this.id = id;
+		this.parent = parent;
+		this.indexInParent = indexInParent;
+		this.transferDuration = duration;
 		network.addNodeToMap(id, this);
 		this.setCurrentExit(0);
+		if(parent != null) {
+			parent.addChildAt(indexInParent, this);
+		}
+	}
+	
+	public Integer getIndexInParent() {
+		return indexInParent;
+	}
+
+	public Integer getTransferDuration() {
+		return transferDuration;
+	}
+
+	@Override
+	public String toString() {
+		return indexInParent + " " + id + " " + getName();
 	}
 
 	/**
@@ -42,25 +67,9 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	 * @throws NoAttachmentException
 	 *             if this component has no parent attached
 	 */
-	public abstract NetworkComponent getParent() throws NoAttachmentException;
-
-	/**
-	 * returns the position of a specified child element below this
-	 * NetworkComponent
-	 *
-	 * @param child
-	 *            The NetworkComponent you are looking for
-	 * @return The attachment number where the child is connected
-	 * @throws NotFoundException
-	 *             if the specified {@code child} is not directly below this
-	 *             NetworkComponent
-	 * @throws NoAttachmentException
-	 *             if the specified {@code child} has no attachments
-	 */
-	public abstract Integer getPositionOf(final NetworkComponent child) throws NotFoundException, NoAttachmentException;
-
-	public abstract IndexedNetworkComponent getIncOf(final NetworkComponent child)
-			throws NotFoundException, NoAttachmentException;
+	public NetworkComponent getParent() throws NoAttachmentException {
+		return parent;
+	}
 
 	/**
 	 * returns the {@linkplain NetworkComponent} which is at the position
@@ -87,7 +96,7 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	 *
 	 * @return a set of all children
 	 */
-	public abstract Set<IndexedNetworkComponent> getIndexedChildren();
+	public abstract Map<Integer,NetworkComponent>  getIndexedChildren();
 
 	/**
 	 * outputs the set of all children
@@ -96,9 +105,9 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	 */
 	public Set<NetworkComponent> getChildren() {
 		final HashSet<NetworkComponent> set = new HashSet<>();
-		final Iterator<IndexedNetworkComponent> i = this.getIndexedChildren().iterator();
+		final Iterator<NetworkComponent> i = this.getIndexedChildren().values().iterator();
 		while (i.hasNext())
-			set.add(i.next().getNc());
+			set.add(i.next());
 		return set;
 	}
 
@@ -115,25 +124,36 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 	 * @throws TreeIntegrityException
 	 *             if this would create a circle
 	 */
-	protected abstract void addChildAt(Integer position, NetworkComponent nc, int transferDuration)
+	protected abstract void addChildAt(Integer position, NetworkComponent nc)
 			throws NoAttachmentException, TreeIntegrityException, SpaceOccupiedException;
 
-	public abstract Exit createExitAt(Integer position, final Integer id, String name, int transferDuration)
-			throws NoAttachmentException, IdAlreadyExistsException;
-
+	public Exit createExitAt(final Integer position, final Integer id, final String name, final int transferDuration)
+			throws IdAlreadyExistsException, NoAttachmentException, TreeIntegrityException, SpaceOccupiedException {
+		final Exit e = new Exit(id, name, this.getNetwork(), this, position, transferDuration);
+		return e;
+	}
 	public abstract Router createRouterAt(Integer position, final Integer id, String Name, int transferDuration)
-			throws NoAttachmentException, IdAlreadyExistsException;
+			throws NoAttachmentException, IdAlreadyExistsException, TreeIntegrityException, SpaceOccupiedException;
 
 	public abstract void fillRoute(Transport t, NetworkComponent target);
 
-	public abstract LinkedList<IndexedNetworkComponent> RouteTo(NetworkComponent target) throws RouteNotFoundException;
+	public abstract LinkedList<NetworkComponent> RouteTo(NetworkComponent target) throws RouteNotFoundException;
 
+	@Override
+	public int compareTo(NetworkComponent o) {
+		return this.id.compareTo(o.id);
+	}
+	
 	public boolean hasChild(final NetworkComponent nc) {
 		if (this.equals(nc))
 			return true;
-		final Iterator<IndexedNetworkComponent> i = this.getIndexedChildren().iterator();
+		Map<Integer, NetworkComponent> indexedChildren = this.getIndexedChildren();
+		if(indexedChildren == null) {
+			return false;
+		}
+		final Iterator<NetworkComponent> i = indexedChildren.values().iterator();
 		while (i.hasNext())
-			if (i.next().getNc().hasChild(nc))
+			if (i.next().hasChild(nc))
 				return true;
 		return false;
 	}
@@ -156,11 +176,11 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 		nc.add(second);
 
 		if (this.hasAllChilds(nc)) {
-			final Iterator<IndexedNetworkComponent> iterator = this.getIndexedChildren().iterator();
+			final Iterator<NetworkComponent> iterator = this.getIndexedChildren().values().iterator();
 			while (iterator.hasNext()) {
-				final IndexedNetworkComponent current = iterator.next();
-				if (current.getNc().hasAllChilds(nc)) {
-					return current.getNc().getIntersectionOf(first, second);
+				final NetworkComponent current = iterator.next();
+				if (current.hasAllChilds(nc)) {
+					return current.getIntersectionOf(first, second);
 				}
 			}
 			return this;

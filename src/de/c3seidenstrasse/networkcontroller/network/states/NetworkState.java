@@ -2,34 +2,26 @@ package de.c3seidenstrasse.networkcontroller.network.states;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
-import de.c3seidenstrasse.networkcontroller.network.IndexedNetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
+import de.c3seidenstrasse.networkcontroller.network.Router;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
 
 public abstract class NetworkState {
-	protected final Set<IndexedNetworkComponent> waiting;
+	protected final Map<Router, Integer> directionForRouter;
 
 	public abstract void accept(NetworkStateVisitor nsv);
 
 	NetworkState() {
-		this.waiting = new HashSet<>();
+		this.directionForRouter = new TreeMap<>();
 	}
 
 	public boolean isFinished() {
-		return this.waiting.isEmpty();
-	}
-
-	public void hasFinished(final NetworkComponent nc) {
-		final Iterator<IndexedNetworkComponent> i = this.waiting.iterator();
-		while (i.hasNext()) {
-			if (i.next().equals(nc)) {
-				i.remove();
-				return;
-			}
-		}
+		return this.directionForRouter.isEmpty();
 	}
 
 	public abstract void arrived();

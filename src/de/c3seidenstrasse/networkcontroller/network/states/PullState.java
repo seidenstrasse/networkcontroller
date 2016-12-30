@@ -2,7 +2,10 @@ package de.c3seidenstrasse.networkcontroller.network.states;
 
 import java.util.TimerTask;
 
+import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
+import de.c3seidenstrasse.networkcontroller.route.Message;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
+import de.c3seidenstrasse.networkcontroller.route.Message.MessageType;
 
 public class PullState extends CapsuleTransportState {
 
@@ -18,9 +21,8 @@ public class PullState extends CapsuleTransportState {
 	@Override
 	public void doYourThing() {
 		this.t.getNetwork().getAirsupplier().pull();
-		final byte[] message = { 0x06, 0x00, (byte) (int) this.t.getStart().getId(), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-		this.t.getNetwork().send(message);
+		// FIXME I put start and end into bytes 1 and 3, is this correct?
+		this.t.getNetwork().send(new Message(MessageType.STARTED, this.t.getStart().getId(), 0, this.t.getEnde().getId()));
 
 		final TimerTask tt = new TimerTask() {
 			@Override
@@ -29,6 +31,12 @@ public class PullState extends CapsuleTransportState {
 				PullState.this.arrived();
 			};
 		};
-		PullState.this.timer.schedule(tt, 120000);
+		int duration =  t.getStart().getTransferDuration();
+		for(NetworkComponent inc : t.getUp()) {
+			duration += inc.getTransferDuration();
+		}
+		duration -= t.getLastUp().getTransferDuration();
+		System.out.println("Computed transfer duration is " + duration);
+		PullState.this.timer.schedule(tt, duration * 1000);
 	}
 }

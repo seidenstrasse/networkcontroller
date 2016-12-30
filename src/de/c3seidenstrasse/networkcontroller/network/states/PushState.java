@@ -2,6 +2,7 @@ package de.c3seidenstrasse.networkcontroller.network.states;
 
 import java.util.TimerTask;
 
+import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
 
 public class PushState extends CapsuleTransportState {
@@ -25,6 +26,12 @@ public class PushState extends CapsuleTransportState {
 				PushState.this.arrived();
 			};
 		};
-		PushState.this.timer.schedule(tt, 120000);
+		int duration =  t.getStart().getTransferDuration();
+		for(NetworkComponent inc : t.getDown()) {
+			duration += inc.getTransferDuration();
+		}
+		duration -= t.getDown().getLast().getTransferDuration();
+		System.out.println("Computed transfer duration is " + duration);
+		PushState.this.timer.schedule(tt, duration * 1000);
 	}
 }
