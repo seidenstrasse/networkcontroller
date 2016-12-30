@@ -30,7 +30,7 @@ public abstract class RouterTurningState extends NetworkState implements Observe
 		while (i.hasNext()) {
 			final NetworkComponent current = i.next();
 			current.register(this, ObserverEvent.POSITIONCHANGED);
-			current.turnTo(current.getI()); // Es muss gedreht
+			current.turnTo(current.getIndexInParent()); // Es muss gedreht
 													// werden
 		}
 		if (this.waiting.isEmpty())
@@ -47,7 +47,7 @@ public abstract class RouterTurningState extends NetworkState implements Observe
 		boolean isDeleted = false;
 		while (i.hasNext() && !isDeleted) {
 			final NetworkComponent current = i.next();
-			if (current.equals(nc) && current.getI().equals(nc.getCurrentExit())) {
+			if (current.equals(nc) && current.getIndexInParent().equals(nc.getCurrentExit())) {
 				current.deregister(this, ObserverEvent.POSITIONCHANGED);
 				i.remove();
 				isDeleted = true;

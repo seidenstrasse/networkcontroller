@@ -1,9 +1,9 @@
 package de.c3seidenstrasse.networkcontroller.network;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.google.gson.annotations.Expose;
 
@@ -28,53 +28,33 @@ public class Router extends NetworkComponent {
 
 	private final NetworkComponent parent;
 	@Expose
-	private final Set<NetworkComponent> childs;
+	private final TreeMap<Integer, NetworkComponent> childrenByIndex;
 
 	@Expose
 	private final String name;
 
 	Router(final Integer id, final String name, final Network network, final NetworkComponent parent, int i, int duration)
-			throws IdAlreadyExistsException {
-		super(id, network, i, duration);
+			throws IdAlreadyExistsException, NoAttachmentException, TreeIntegrityException, SpaceOccupiedException {
+		super(id, network, parent, i, duration);
 		this.parent = parent;
-		this.childs = new HashSet<>();
+		this.childrenByIndex = new TreeMap<>();
 		this.name = name;
 	}
 
 	@Override
-	public NetworkComponent getParent() throws NoAttachmentException {
-		if (this.parent == null)
-			throw new NoAttachmentException();
-		return this.parent;
+	public Map<Integer,NetworkComponent> getIndexedChildren() {
+		return this.childrenByIndex;
 	}
 
 	@Override
-	public Set<NetworkComponent> getIndexedChildren() {
-		return this.childs;
-	}
-
-	@Override
-	public void addChildAt(final Integer position, final NetworkComponent nc, final int transferDuration)
+	public void addChildAt(final Integer position, final NetworkComponent nc)
 			throws TreeIntegrityException, SpaceOccupiedException {
-		assert(position == nc.getI());
-		assert(transferDuration == nc.getTransferDuration());
+		assert(position == nc.getIndexInParent());
 		this.addChild(nc);
 	}
 
-	// pull up?
-	@Override
-	public Integer getPositionOf(final NetworkComponent child) throws NotFoundException {
-		final Iterator<NetworkComponent> i = this.childs.iterator();
-		while (i.hasNext()) {
-			final NetworkComponent current = i.next();
-			if (current.equals(child))
-				return current.getI();
-		}
-		throw new NotFoundException("No Position found for " + child.toString());
-	}
-
 	public NetworkComponent getIncOf(final NetworkComponent child) throws NotFoundException {
-		final Iterator<NetworkComponent> i = this.childs.iterator();
+		final Iterator<NetworkComponent> i = this.childrenByIndex.values().iterator();
 		while (i.hasNext()) {
 			final NetworkComponent current = i.next();
 			if (current.equals(child))
@@ -85,10 +65,10 @@ public class Router extends NetworkComponent {
 
 	@Override
 	public NetworkComponent getChildAt(final Integer position) throws NoAttachmentException {
-		final Iterator<NetworkComponent> i = this.childs.iterator();
+		final Iterator<NetworkComponent> i = this.childrenByIndex.values().iterator();
 		while (i.hasNext()) {
 			final NetworkComponent current = i.next();
-			if (current.getI().equals(position))
+			if (current.getIndexInParent().equals(position))
 				return current;
 		}
 		throw new NoAttachmentException("No Attachment at position " + position);
@@ -105,36 +85,19 @@ public class Router extends NetworkComponent {
 		}
 
 		try {
-			this.getChildAt(inc.getI());
+			this.getChildAt(inc.getIndexInParent());
 		} catch (final NoAttachmentException e) {
 			// no child on this position
-			this.childs.add(inc);
+			this.childrenByIndex.put(inc.getIndexInParent(),inc);
 			return;
 		}
-		throw new SpaceOccupiedException(this.toString() + " has already a child at " + inc.getI());
-	}
-
-	@Override
-	public Exit createExitAt(final Integer position, final Integer id, final String name, final int transferDuration)
-			throws IdAlreadyExistsException {
-		final Exit e = new Exit(id, name, this.getNetwork(), this, position, transferDuration);
-		try {
-			this.addChildAt(position, e, transferDuration);
-		} catch (SpaceOccupiedException | TreeIntegrityException e1) {
-			throw new Error(); // should not happen
-		}
-		return e;
+		throw new SpaceOccupiedException(this.toString() + " has already a child at " + inc.getIndexInParent());
 	}
 
 	@Override
 	public Router createRouterAt(final Integer position, final Integer id, final String name,
-			final int transferDuration) throws IdAlreadyExistsException {
+			final int transferDuration) throws IdAlreadyExistsException, NoAttachmentException, TreeIntegrityException, SpaceOccupiedException {
 		final Router r = new Router(id, name, this.getNetwork(), this, position, transferDuration);
-		try {
-			this.addChildAt(position, r, transferDuration);
-		} catch (final TreeIntegrityException | SpaceOccupiedException e) {
-			throw new Error(); // Should not happen
-		}
 		return r;
 	}
 
@@ -142,7 +105,7 @@ public class Router extends NetworkComponent {
 	 * return INC with the next hop and node
 	 */
 	private NetworkComponent getNextExitFor(final NetworkComponent nc) throws NotFoundException {
-		final Iterator<NetworkComponent> i = this.childs.iterator();
+		final Iterator<NetworkComponent> i = this.childrenByIndex.values().iterator();
 		while (i.hasNext()) {
 			final NetworkComponent inc = i.next();
 			if (inc.hasChild(nc))
@@ -159,7 +122,7 @@ public class Router extends NetworkComponent {
 			try {
 				final NetworkComponent inc = this.getNextExitFor(target);
 				t.addDown(this);
-				this.getChildAt(inc.getI()).fillRoute(t, target); // TODO
+				this.getChildAt(inc.getIndexInParent()).fillRoute(t, target); // TODO
 																	// replace
 																	// by
 																	// inc
@@ -216,7 +179,7 @@ public class Router extends NetworkComponent {
 	public TreeItem<NetworkComponent> getTreeItem() {
 		final TreeItem<NetworkComponent> root = new TreeItem<>(this);
 		root.setExpanded(true);
-		final Iterator<NetworkComponent> i = this.childs.iterator();
+		final Iterator<NetworkComponent> i = this.childrenByIndex.values().iterator();
 		while (i.hasNext())
 			root.getChildren().add(i.next().getTreeItem());
 		return root;

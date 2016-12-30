@@ -94,11 +94,11 @@ public class NetworkScreenController {
 	private void selected(final NetworkComponent nc) {
 		this.selected = nc;
 		this.childCombobox.getItems().clear();
-		this.childCombobox.getItems().addAll(this.selected.getIndexedChildren());
+		this.childCombobox.getItems().addAll(this.selected.getIndexedChildren().values());
 		this.childCombobox.getItems().sort((arg0, arg1) -> {
-			if (arg0.getI() < arg1.getI())
+			if (arg0.getIndexInParent() < arg1.getIndexInParent())
 				return -1;
-			else if (arg0.getI() > arg1.getI())
+			else if (arg0.getIndexInParent() > arg1.getIndexInParent())
 				return 1;
 			return 0;
 		});
@@ -107,12 +107,12 @@ public class NetworkScreenController {
 
 	public void turnToAction() {
 		final NetworkComponent inc = this.childCombobox.getValue();
-		this.selected.turnTo(inc.getI());
+		this.selected.turnTo(inc.getIndexInParent());
 	}
 	
 	public void connectedAction() {
 		final NetworkComponent inc = this.childCombobox.getValue();
-		selected.setCurrentExit(inc.getI());
+		selected.setCurrentExit(inc.getIndexInParent());
 	}
 
 	@FXML

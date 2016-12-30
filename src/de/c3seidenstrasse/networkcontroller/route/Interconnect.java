@@ -49,7 +49,7 @@ public class Interconnect implements Observer {
 
 		this.route.forEach((inc) -> {
 			inc.register(this, ObserverEvent.POSITIONCHANGED);
-			inc.turnTo(inc.getI());
+			inc.turnTo(inc.getIndexInParent());
 		});
 	}
 
@@ -69,7 +69,7 @@ public class Interconnect implements Observer {
 		while (i.hasNext()) {
 			final NetworkComponent current = i.next();
 			if (current.equals(nc)) {
-				if (nc.getCurrentExit() == current.getI()) {
+				if (nc.getCurrentExit() == current.getIndexInParent()) {
 					// hat alles geklappt
 					i.remove();
 				}

@@ -18,7 +18,10 @@ import de.c3seidenstrasse.networkcontroller.network.states.PullState;
 import de.c3seidenstrasse.networkcontroller.network.states.PushState;
 import de.c3seidenstrasse.networkcontroller.network.states.RouterTurningState;
 import de.c3seidenstrasse.networkcontroller.utils.IdAlreadyExistsException;
+import de.c3seidenstrasse.networkcontroller.utils.NoAttachmentException;
 import de.c3seidenstrasse.networkcontroller.utils.NoCurrentTransportException;
+import de.c3seidenstrasse.networkcontroller.utils.SpaceOccupiedException;
+import de.c3seidenstrasse.networkcontroller.utils.TreeIntegrityException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -41,9 +44,9 @@ public class Network implements Runnable {
 		this.busProtocol = FXCollections.observableArrayList();
 		this.airsupplier = new AirSupplier(this);
 		try {
-			this.root = new CodeReader(0x7F, this);
-		} catch (final IdAlreadyExistsException e) {
-			throw new Error();
+			this.root = new CodeReader(0x7F, this, 5);
+		} catch (final IdAlreadyExistsException | NoAttachmentException | TreeIntegrityException | SpaceOccupiedException e) {
+			throw new Error(e);
 		}
 		this.getRoot().create33c3();
 
