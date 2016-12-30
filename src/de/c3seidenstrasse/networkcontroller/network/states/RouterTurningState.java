@@ -1,7 +1,5 @@
 package de.c3seidenstrasse.networkcontroller.network.states;
 
-import java.util.Iterator;
-
 import de.c3seidenstrasse.networkcontroller.network.NetworkComponent;
 import de.c3seidenstrasse.networkcontroller.network.Router;
 import de.c3seidenstrasse.networkcontroller.route.Transport;
