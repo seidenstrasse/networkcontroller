@@ -23,7 +23,7 @@ import javafx.scene.control.TreeItem;
  *
  * @author clarity
  */
-public abstract class NetworkComponent extends NetworkComponentObservee {
+public abstract class NetworkComponent extends NetworkComponentObservee implements Comparable<NetworkComponent> {
 	private Integer currentExit;
 	private final Network network;
 	
@@ -139,6 +139,11 @@ public abstract class NetworkComponent extends NetworkComponentObservee {
 
 	public abstract LinkedList<NetworkComponent> RouteTo(NetworkComponent target) throws RouteNotFoundException;
 
+	@Override
+	public int compareTo(NetworkComponent o) {
+		return this.id.compareTo(o.id);
+	}
+	
 	public boolean hasChild(final NetworkComponent nc) {
 		if (this.equals(nc))
 			return true;
